@@ -1,6 +1,7 @@
-import Mathlib.Data.Nat.Basic
+import Mathlib.Data.Int.Basic
+import Mathlib.Algebra.Divisibility.Basic
 
 def _candidate : Prop :=
-  ∀ a b : ℕ, a * b = b * a
+  forall a b : ℤ, a ∣ b -> exists k : ℤ, b = a * k
 
 #check (_candidate : Prop)
