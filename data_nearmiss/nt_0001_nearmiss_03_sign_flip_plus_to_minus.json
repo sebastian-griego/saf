@@ -1,0 +1,14 @@
+{
+  "id": "nt_0001_nearmiss_03_sign_flip_plus_to_minus",
+  "domain": "nat",
+  "nl": "For all natural numbers a and b, a - b = b - a.",
+  "lean": "∀ a b : ℕ, a + b = b + a",
+  "candidate": "∀ a b : ℕ, a - b = b - a",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "should_reject": true,
+  "nearmiss_type": "sign_flip_plus_to_minus",
+  "base_id": "nt_0001"
+}
+

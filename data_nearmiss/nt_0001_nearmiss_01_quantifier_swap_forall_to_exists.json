@@ -1,0 +1,14 @@
+{
+  "id": "nt_0001_nearmiss_01_quantifier_swap_forall_to_exists",
+  "domain": "nat",
+  "nl": "There exists natural numbers a and b such that a + b = b + a.",
+  "lean": "∀ a b : ℕ, a + b = b + a",
+  "candidate": "∃ a b : ℕ, a + b = b + a",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "should_reject": true,
+  "nearmiss_type": "quantifier_swap_forall_to_exists",
+  "base_id": "nt_0001"
+}
+

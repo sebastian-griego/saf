@@ -1,6 +1,6 @@
 # S1 Normalization Rules
 
-**Version**: 1.1  
+**Version**: 2.0  
 **Last Updated**: 2025-01-10
 
 ## Philosophy
@@ -49,12 +49,84 @@ S1 rules are applied to **both** canonical and candidate propositions before com
 - Input: `∀ (x₁ x₂ : ℕ), x₁ ≥ x₂`
 - Output: `∀ (x₁ x₂ : ℕ), x₂ ≤ x₁`
 
+### Rule 3: Double Negation Elimination
+**Transformation**: `¬¬P` → `P`
+
+**Source**: Classical logic. Double negation elimination is valid in classical logic (which Lean uses by default).
+
+**Justification**: Universally valid logical equivalence. `¬¬P` is logically equivalent to `P` in classical logic.
+
+**Example**:
+- Input: `¬¬ (x = y)`
+- Output: `x = y`
+
+### Rule 4: De Morgan's Laws
+**Transformation**: 
+- `¬(P ∧ Q)` → `(¬P ∨ ¬Q)`
+- `¬(P ∨ Q)` → `(¬P ∧ ¬Q)`
+
+**Source**: Classical logic (De Morgan's laws).
+
+**Justification**: Universally valid logical equivalences. These are fundamental laws of classical logic that hold without any domain assumptions.
+
+**Example**:
+- Input: `¬(P ∧ Q)`
+- Output: `(¬P ∨ ¬Q)`
+- Input: `¬(P ∨ Q)`
+- Output: `(¬P ∧ ¬Q)`
+
+**Note**: Operands are sorted lexicographically for deterministic normalization.
+
+### Rule 5: Quantifier Negation
+**Transformation**:
+- `¬∃ (x : T), P x` → `∀ (x : T), ¬P x`
+- `¬∀ (x : T), P x` → `∃ (x : T), ¬P x`
+
+**Source**: Classical logic (quantifier negation laws).
+
+**Justification**: Universally valid logical equivalences. These are standard quantifier negation laws that hold in classical logic.
+
+**Example**:
+- Input: `¬∃ (x : ℕ), x > 0`
+- Output: `∀ (x : ℕ), ¬(x > 0)`
+- Input: `¬∀ (x : ℕ), x = 0`
+- Output: `∃ (x : ℕ), ¬(x = 0)`
+
+### Rule 6: Contrapositive Normalization
+**Transformation**: `P → Q` → `¬Q → ¬P`
+
+**Source**: Classical logic (contrapositive law).
+
+**Justification**: Universally valid logical equivalence. The contrapositive of an implication is logically equivalent to the original.
+
+**Example**:
+- Input: `P → Q`
+- Output: `¬Q → ¬P`
+
+**Note**: All implications are normalized to contrapositive form for deterministic canonical representation.
+
+### Rule 7: Commutativity Normalization
+**Transformation**: 
+- `P ∧ Q` → `Q ∧ P` (normalized to lexicographic order)
+- `P ∨ Q` → `Q ∨ P` (normalized to lexicographic order)
+
+**Source**: Classical logic (commutativity of conjunction and disjunction).
+
+**Justification**: Universally valid logical equivalences. Conjunction and disjunction are commutative operations.
+
+**Example**:
+- Input: `Q ∧ P`
+- Output: `P ∧ Q` (if `P < Q` lexicographically)
+- Input: `B ∨ A`
+- Output: `A ∨ B` (if `A < B` lexicographically)
+
+**Note**: Operands are sorted lexicographically by their string representation for deterministic normalization. This ensures that `P ∧ Q` and `Q ∧ P` normalize to the same canonical form.
+
 ## Out of Scope
 
-The following are **NOT** included in S1, as they require additional structure or are logical equivalences rather than definitional:
+The following are **NOT** included in S1, as they require additional structure or are not universally valid:
 
 - `a ≤ b ∧ b ≤ a ↔ a = b` — requires an order structure (antisymmetry)
-- `¬ ∃ (x : T), P x ↔ ∀ (x : T), ¬ P x` — logical equivalence (De Morgan's law), not definitional
 - Binder sugar variations — already handled in S0 (`∀ x, P` vs `∀ (x : T), P`)
 - Comma/spacing differences — already handled in S0
 - ASCII to Unicode — already handled in S0
@@ -63,10 +135,18 @@ The following are **NOT** included in S1, as they require additional structure o
 ## Implementation
 
 Rules are applied in order:
-1. Rule 0 (Alpha-renaming) is applied first to normalize bound variable names
-2. Rule 2 (Greater-Equal) is applied before Rule 1 to avoid conflicts
-3. Rule 1 (Not-Equals) is applied last
-4. Spacing is re-normalized after all rules
+1. **Rule 0** (Alpha-renaming) is applied first to normalize bound variable names
+2. **Rule 2** (Greater-Equal) is applied before Rule 1 to avoid conflicts
+3. **Rule 1** (Not-Equals) converts `≠` to negated equality
+4. **Rule 3** (Logical Structure Normalization) applies Rules 3-7 recursively:
+   - **Rule 3**: Double negation elimination (`¬¬P → P`)
+   - **Rule 4**: De Morgan's laws (push negations inward)
+   - **Rule 5**: Quantifier negation (push negations through quantifiers)
+   - **Rule 6**: Contrapositive normalization (convert implications to contrapositive form)
+   - **Rule 7**: Commutativity normalization (sort `∧` and `∨` operands lexicographically)
+5. Spacing is re-normalized after all rules
+
+The logical structure normalization (Rules 3-7) is applied recursively to handle nested structures. All rules are deterministic, ensuring that equivalent propositions normalize to the same canonical form.
 
 Both canonical and candidate propositions undergo the same transformations, ensuring equivalent notation is accepted.
 

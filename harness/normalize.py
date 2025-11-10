@@ -1,7 +1,8 @@
 """Normalization for Lean proposition strings: S0 (formatting) and S1 (semantic rewrites)."""
 import re
 import unicodedata
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional, Union
+from enum import Enum
 
 # Source of truth for S1 normalization rules
 S1_RULES_FILE = "bank/s1_rules.md"
@@ -59,6 +60,8 @@ def _punct_space(s: str) -> str:
     s = re.sub(r"\s*≠\s*", " ≠ ", s)
     s = re.sub(r"\s*∧\s*", " ∧ ", s)
     s = re.sub(r"\s*∨\s*", " ∨ ", s)
+    # Normalize negation: remove space after ¬ (¬ P → ¬P)
+    s = re.sub(r"¬\s+", "¬", s)
     return s
 
 def _alpha_rename(s: str) -> str:
@@ -191,6 +194,253 @@ def _alpha_rename(s: str) -> str:
     
     return process_expression(s)
 
+def _find_matching_paren(s: str, start: int) -> int:
+    """Find the matching closing parenthesis for an opening one at position start."""
+    depth = 0
+    for i in range(start, len(s)):
+        if s[i] == '(':
+            depth += 1
+        elif s[i] == ')':
+            depth -= 1
+            if depth == 0:
+                return i
+    return -1
+
+def _split_by_operator(expr: str, op: str) -> List[str]:
+    """Split expression by operator at top level (respecting parentheses)."""
+    parts = []
+    depth = 0
+    start = 0
+    i = 0
+    expr_stripped = expr.strip()
+    while i < len(expr_stripped):
+        if expr_stripped[i] == '(':
+            depth += 1
+        elif expr_stripped[i] == ')':
+            depth -= 1
+        elif depth == 0:
+            # Check if we have the operator at this position (with possible leading whitespace)
+            # Skip leading whitespace
+            j = i
+            while j < len(expr_stripped) and expr_stripped[j].isspace():
+                j += 1
+            # Check if operator starts here
+            if j < len(expr_stripped) and expr_stripped[j:j+len(op)] == op:
+                # Found operator at top level
+                part = expr_stripped[start:i].strip()
+                if part:
+                    parts.append(part)
+                # Skip operator and any trailing whitespace
+                i = j + len(op)
+                while i < len(expr_stripped) and expr_stripped[i].isspace():
+                    i += 1
+                start = i
+                continue
+        i += 1
+    
+    # Add the last part
+    if start < len(expr_stripped):
+        part = expr_stripped[start:].strip()
+        if part:
+            parts.append(part)
+    
+    return parts if len(parts) >= 2 else [expr]
+
+def _normalize_logical_structure(s: str) -> str:
+    """
+    Normalize logical structure by applying equivalence rules recursively.
+    
+    Rules applied (in order):
+    1. Double negation elimination: ¬¬P → P
+    2. De Morgan's laws: ¬(P ∧ Q) → (¬P ∨ ¬Q), ¬(P ∨ Q) → (¬P ∧ ¬Q)
+    3. Quantifier negation: ¬∃ (x : T), P → ∀ (x : T), ¬P, ¬∀ (x : T), P → ∃ (x : T), ¬P
+    4. Contrapositive: P → Q → ¬Q → ¬P
+    5. Commutativity: Normalize order of ∧ and ∨ operands (lexicographic)
+    
+    Returns normalized formula string.
+    """
+    s = s.strip()
+    if not s:
+        return s
+    
+    def normalize_rec(expr: str) -> str:
+        """Recursively normalize a logical expression."""
+        expr = expr.strip()
+        if not expr:
+            return expr
+        
+        # Rule 1: Double negation elimination: ¬¬P → P
+        double_neg_match = re.match(r'^¬\s*¬\s*(.+)$', expr)
+        if double_neg_match:
+            inner = double_neg_match.group(1).strip()
+            return normalize_rec(inner)
+        
+        # Rule 2: De Morgan's laws - handle negated conjunctions/disjunctions
+        # First check if we have ¬( ... )
+        if expr.startswith('¬') and expr[1:].strip().startswith('('):
+            # Find the matching closing paren
+            inner_start = expr.find('(')
+            close_paren = _find_matching_paren(expr, inner_start)
+            if close_paren > 0:
+                inner = expr[inner_start+1:close_paren].strip()
+                
+                # Check for ∧ or ∨ at top level of inner expression
+                and_parts = _split_by_operator(inner, '∧')
+                or_parts = _split_by_operator(inner, '∨')
+                
+                if len(and_parts) >= 2:
+                    # ¬(P ∧ Q) → (¬P ∨ ¬Q)
+                    normalized_parts = []
+                    for part in and_parts:
+                        norm_part = normalize_rec(part)
+                        if norm_part.startswith('¬'):
+                            normalized_parts.append(normalize_rec(norm_part[1:].strip()))
+                        else:
+                            normalized_parts.append(f"¬{norm_part}")
+                    # Sort for determinism
+                    normalized_parts.sort()
+                    result = f"({' ∨ '.join(normalized_parts)})"
+                    if result != expr:
+                        return normalize_rec(result)
+                
+                if len(or_parts) >= 2:
+                    # ¬(P ∨ Q) → (¬P ∧ ¬Q)
+                    normalized_parts = []
+                    for part in or_parts:
+                        norm_part = normalize_rec(part)
+                        if norm_part.startswith('¬'):
+                            normalized_parts.append(normalize_rec(norm_part[1:].strip()))
+                        else:
+                            normalized_parts.append(f"¬{norm_part}")
+                    normalized_parts.sort()
+                    result = f"({' ∧ '.join(normalized_parts)})"
+                    if result != expr:
+                        return normalize_rec(result)
+        
+        # Rule 3: Quantifier negation
+        # ¬∃ (x : T), P → ∀ (x : T), ¬P
+        neg_exists_match = re.match(r'^¬\s*∃\s*\(([^)]+)\)\s*,\s*(.+)$', expr)
+        if neg_exists_match:
+            binder = neg_exists_match.group(1).strip()
+            body = neg_exists_match.group(2).strip()
+            norm_body = normalize_rec(body)
+            if norm_body.startswith('¬'):
+                norm_body = normalize_rec(norm_body[1:].strip())
+            else:
+                norm_body = f"¬{norm_body}"
+            return normalize_rec(f"∀ ({binder}), {norm_body}")
+        
+        # ¬∀ (x : T), P → ∃ (x : T), ¬P
+        neg_forall_match = re.match(r'^¬\s*∀\s*\(([^)]+)\)\s*,\s*(.+)$', expr)
+        if neg_forall_match:
+            binder = neg_forall_match.group(1).strip()
+            body = neg_forall_match.group(2).strip()
+            norm_body = normalize_rec(body)
+            if norm_body.startswith('¬'):
+                norm_body = normalize_rec(norm_body[1:].strip())
+            else:
+                norm_body = f"¬{norm_body}"
+            return normalize_rec(f"∃ ({binder}), {norm_body}")
+        
+        # Rule 4: Contrapositive: P → Q → ¬Q → ¬P
+        # Normalize implications to contrapositive form
+        impl_parts = _split_by_operator(expr, '→')
+        if len(impl_parts) == 2:
+            # Single implication: P → Q becomes ¬Q → ¬P
+            left = normalize_rec(impl_parts[0])
+            right = normalize_rec(impl_parts[1])
+            
+            # Check if already in contrapositive form (both sides negated)
+            left_negated = left.startswith('¬')
+            right_negated = right.startswith('¬')
+            
+            # If already in contrapositive form (both negated), it's canonical
+            if left_negated and right_negated:
+                # Already in contrapositive form, return as-is
+                return expr
+            
+            # Convert to contrapositive: P → Q becomes ¬Q → ¬P
+            # For canonical form, we want: negated right → negated left
+            if right_negated:
+                neg_right = right  # Already negated
+            else:
+                neg_right = f"¬{right}"
+            
+            if left_negated:
+                neg_left = left  # Already negated
+            else:
+                neg_left = f"¬{left}"
+            
+            # Canonical form: negated right → negated left (i.e., ¬Q → ¬P)
+            result = f"{neg_right} → {neg_left}"
+            if result != expr:
+                return result  # Don't recurse to avoid infinite loop
+        elif len(impl_parts) > 2:
+            # Multiple implications: chain them, converting each to contrapositive
+            normalized_parts = [normalize_rec(p) for p in impl_parts]
+            result_parts = []
+            for i in range(len(normalized_parts) - 1):
+                left = normalized_parts[i]
+                right = normalized_parts[i + 1]
+                
+                # Convert to contrapositive
+                if right.startswith('¬'):
+                    neg_right = normalize_rec(right[1:].strip())
+                else:
+                    neg_right = f"¬{right}"
+                
+                if left.startswith('¬'):
+                    neg_left = normalize_rec(left[1:].strip())
+                else:
+                    neg_left = f"¬{left}"
+                
+                result_parts.append(f"{neg_right} → {neg_left}")
+            
+            if result_parts:
+                # Chain the converted implications
+                return normalize_rec(' → '.join(result_parts))
+        
+        # Rule 5: Commutativity - normalize order of ∧ and ∨ operands
+        for op in ['∧', '∨']:
+            parts = _split_by_operator(expr, op)
+            if len(parts) >= 2:
+                # Normalize each part and sort lexicographically
+                normalized_parts = [normalize_rec(p) for p in parts]
+                sorted_parts = sorted(normalized_parts)  # Lexicographic sort for determinism
+                # Only apply if order actually changed
+                if normalized_parts != sorted_parts:
+                    return normalize_rec(f" {op} ".join(sorted_parts))
+                # If already sorted, just return the normalized version
+                result = f" {op} ".join(normalized_parts)
+                if result != expr:
+                    return normalize_rec(result)
+        
+        # Handle parenthesized expressions
+        if expr.startswith('(') and expr.endswith(')'):
+            inner = expr[1:-1].strip()
+            normalized_inner = normalize_rec(inner)
+            result = f"({normalized_inner})"
+            if result != expr:
+                return result
+        
+        # Handle quantifiers (process body recursively)
+        quant_match = re.match(r'^(∀|∃)\s*\(([^)]+)\)\s*,\s*(.+)$', expr)
+        if quant_match:
+            quant = quant_match.group(1)
+            binder = quant_match.group(2).strip()
+            body = quant_match.group(3).strip()
+            norm_body = normalize_rec(body)
+            result = f"{quant} ({binder}), {norm_body}"
+            if result != expr:
+                return result
+        
+        # No transformation applies, return as-is
+        return expr
+    
+    # Apply normalization recursively
+    result = normalize_rec(s)
+    return result
+
 def _normalize_s1(s: str) -> str:
     """
     S1 normalization: Notation-level equalities that are definitionally equivalent.
@@ -201,6 +451,12 @@ def _normalize_s1(s: str) -> str:
     0. Alpha-renaming: Normalize bound variable names to canonical form (x₁, x₂, ...)
     1. x ≠ y → ¬ (x = y)  (definitional: ≠ is notation for ¬ (=))
     2. a ≥ b → b ≤ a      (definitional: ≥ is notation for flipped ≤)
+    3. Logical equivalences (applied recursively):
+       - Double negation: ¬¬P → P
+       - De Morgan: ¬(P ∧ Q) → (¬P ∨ ¬Q), ¬(P ∨ Q) → (¬P ∧ ¬Q)
+       - Quantifier negation: ¬∃ (x : T), P → ∀ (x : T), ¬P, ¬∀ (x : T), P → ∃ (x : T), ¬P
+       - Contrapositive: P → Q → ¬Q → ¬P
+       - Commutativity: Normalize order of ∧ and ∨ operands (lexicographic)
     
     Applied to both canonical and candidate for conservative equivalence checking.
     """
@@ -230,6 +486,9 @@ def _normalize_s1(s: str) -> str:
         repl_neq,
         s
     )
+    
+    # Rule 3: Logical structure normalization (applied recursively)
+    s = _normalize_logical_structure(s)
     
     # Re-normalize spacing after all rewrites
     s = _punct_space(s)

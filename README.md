@@ -68,12 +68,15 @@ saf_v0_new/
   WHY.md                 # Why this is useful to the field
   SETUP.md               # Detailed setup and toolchain documentation
   CAPABILITIES.md        # Detailed capabilities and limitations
+  TRACK_C.md             # Track C (Near-Miss) testing documentation
   data/                  # Test items: canonical Lean + NL + imports
   data_challenge/        # Challenge test cases
+  data_nearmiss/         # Track C: Adversarial near-miss test cases
   bank/
     s1_rules.md          # S1 normalization rules documentation
   harness/
     check_s0.py          # Main harness: type-check → normalize → compare
+    generate_nearmiss.py # Generate Track C near-miss variants
     normalize.py         # S0/S1 normalization
     lean_project/        # Lean Lake project with mathlib
   scripts/
@@ -122,7 +125,24 @@ The toolchain is frozen to ensure reproducible results across different machines
 - See [bank/s1_rules.md](bank/s1_rules.md) for rule documentation
 - See [CAPABILITIES.md](CAPABILITIES.md) for detailed capabilities and limitations
 
+## Track C — Adversarial Near-Miss Testing
+
+Track C tests **robustness** by generating adversarial near-miss variants that should be rejected. See [TRACK_C.md](TRACK_C.md) for details.
+
+**Generate near-miss test cases:**
+```powershell
+python harness\generate_nearmiss.py --base-data .\data --output .\data_nearmiss
+```
+
+**Run Track C evaluation:**
+```powershell
+python harness\check_s0.py --data .\data_nearmiss --project .\harness\lean_project --out reports\track_c.json
+```
+
+The harness reports **FANM (False Accept Rate on Near-Miss)** — the percentage of near-miss variants incorrectly accepted. For a reliable system, FANM should be ≈ 0.
+
 ## Extending
 
 - **Add items**: copy any file in `data/`, edit `nl`, `lean`, and `imports`. Keep NL unambiguous.
 - **S1 rewrites**: add safe equivalence rules in `normalize.py`'s `_normalize_s1()` function.
+- **Near-miss variants**: use `generate_nearmiss.py` to create Track C test cases, or manually create test cases with `"should_reject": true`.
