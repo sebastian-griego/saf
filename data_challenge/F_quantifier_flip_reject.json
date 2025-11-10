@@ -1,0 +1,8 @@
+{
+  "id": "F_quantifier_flip_reject",
+  "domain": "nat",
+  "nl": "Candidate existentially quantifies the outer variables instead of universally quantifying them.",
+  "lean": "∀ a b : ℕ, a ≤ b ∧ ∃ k, b = a + k",
+  "imports": ["Mathlib/Data/Nat/Basic"],
+  "candidate": "∃ a b : ℕ, a ≤ b ∧ ∃ k, b = a + k"
+}

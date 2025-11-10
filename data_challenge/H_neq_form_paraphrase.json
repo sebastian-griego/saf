@@ -1,0 +1,8 @@
+{
+  "id": "H_neq_form_paraphrase",
+  "domain": "int",
+  "nl": "Rewrites ≠ to ¬(=) on both sides under S1 canonicalization.",
+  "lean": "∀ a b : ℤ, a ≠ b ∧ ¬ (a = b)",
+  "imports": ["Mathlib/Data/Int/Basic"],
+  "candidate": "∀ a b : ℤ, a ≠ b ∧ a ≠ b"
+}

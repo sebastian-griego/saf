@@ -1,0 +1,11 @@
+{
+  "id": "nt_0011",
+  "domain": "int",
+  "nl": "For all integers a and b, if a divides b then there exists k such that b = a * k.",
+  "lean": "∀ a b : ℤ, a ∣ b → ∃ k : ℤ, b = a * k",
+  "imports": [
+    "Mathlib/Data/Int/Basic",
+    "Mathlib/Algebra/Divisibility"
+  ],
+  "candidate": "∀ a b : ℤ, a ∣ b → ∃ k : ℤ, b = a * k"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "nt_0003",
+  "domain": "nat",
+  "nl": "For all natural numbers a, 0 + a = a.",
+  "lean": "∀ a : ℕ, 0 + a = a",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "candidate": "∀ a : ℕ, 0 + a = a"
+}

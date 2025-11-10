@@ -1,0 +1,8 @@
+{
+  "id": "D_unknown_identifier_reject",
+  "domain": "nat",
+  "nl": "Candidate references a symbol that is not defined in the imported modules.",
+  "lean": "∀ a b : ℕ, a ≤ b → ∃ k, b = a + k",
+  "imports": ["Mathlib/Data/Nat/Basic"],
+  "candidate": "∀ a b : ℕ, mysteriousRelation a b"
+}

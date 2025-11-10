@@ -1,0 +1,11 @@
+{
+  "id": "C_domain_drift_reject",
+  "domain": "mixed",
+  "nl": "Candidate drifts from naturals to integers in both the quantifiers and witness.",
+  "lean": "∀ a b : ℕ, a ≤ b ∧ ∃ k, a + k = b",
+  "imports": [
+    "Mathlib/Data/Int/Basic",
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "candidate": "∀ a b : ℤ, a ≤ b ∧ ∃ k : ℤ, a + k = b"
+}

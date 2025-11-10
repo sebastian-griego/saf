@@ -1,0 +1,10 @@
+{
+  "id": "nt_0013",
+  "domain": "nat",
+  "nl": "For every natural number n, n ≤ n.",
+  "lean": "∀ n : ℕ, n ≤ n",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "candidate": "∀ n : ℕ, n ≤ n"
+}

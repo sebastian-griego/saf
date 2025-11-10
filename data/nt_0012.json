@@ -1,0 +1,11 @@
+{
+  "id": "nt_0012",
+  "domain": "int",
+  "nl": "For all integers a, b, and c, if a divides b and a divides c then a divides b + c.",
+  "lean": "∀ a b c : ℤ, a ∣ b → a ∣ c → a ∣ b + c",
+  "imports": [
+    "Mathlib/Data/Int/Basic",
+    "Mathlib/Algebra/Divisibility"
+  ],
+  "candidate": "∀ a b c : ℤ, a ∣ b → a ∣ c → a ∣ b + c"
+}

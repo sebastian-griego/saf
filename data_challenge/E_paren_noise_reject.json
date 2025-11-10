@@ -1,0 +1,8 @@
+{
+  "id": "E_paren_noise_reject",
+  "domain": "nat",
+  "nl": "Candidate adds redundant parentheses so S0 exposes the mismatch.",
+  "lean": "∀ a b : ℕ, a + b = b + a",
+  "imports": ["Mathlib/Data/Nat/Basic"],
+  "candidate": "∀ a b : ℕ, (a + b) = (b + a)"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "nt_0019",
+  "domain": "nat",
+  "nl": "For all natural numbers a and b, a * b = b * a.",
+  "lean": "∀ a b : ℕ, a * b = b * a",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "candidate": "∀ a b : ℕ , a * b = b * a"
+}
+

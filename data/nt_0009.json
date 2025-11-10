@@ -1,0 +1,10 @@
+{
+  "id": "nt_0009",
+  "domain": "nat",
+  "nl": "For all natural numbers a and b, a ≤ b iff there exists k such that a + k = b.",
+  "lean": "∀ a b : ℕ, a ≤ b ↔ ∃ k, a + k = b",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "candidate": "∀ a b : ℕ, a ≤ b ↔ ∃ k, a + k = b"
+}

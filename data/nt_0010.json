@@ -1,0 +1,10 @@
+{
+  "id": "nt_0010",
+  "domain": "int",
+  "nl": "For all integers a and b, a ≠ b iff not (a = b).",
+  "lean": "∀ a b : ℤ, a ≠ b ↔ ¬ (a = b)",
+  "imports": [
+    "Mathlib/Data/Int/Basic"
+  ],
+  "candidate": "∀ a b : ℤ, a ≠ b ↔ ¬ (a = b)"
+}

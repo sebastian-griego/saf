@@ -1,0 +1,8 @@
+{
+  "id": "G_ge_vs_le_paraphrase",
+  "domain": "nat",
+  "nl": "Equivalent paraphrase using ≥ with sides flipped.",
+  "lean": "∀ a b : ℕ, a ≤ b ∧ ∃ k, a + k = b",
+  "imports": ["Mathlib/Data/Nat/Basic"],
+  "candidate": "∀ a b : ℕ, a ≥ b ∧ ∃ k, b + k = a"
+}

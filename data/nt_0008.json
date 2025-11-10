@@ -1,0 +1,10 @@
+{
+  "id": "nt_0008",
+  "domain": "nat",
+  "nl": "For all natural numbers a, b, and c, a * (b + c) = a * b + a * c.",
+  "lean": "∀ a b c : ℕ, a * (b + c) = a * b + a * c",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "candidate": "∀ a b c : ℕ, a * (b + c) = a * b + a * c"
+}

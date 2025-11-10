@@ -1,0 +1,8 @@
+{
+  "id": "A_normalizer_accept_ascii",
+  "domain": "nat",
+  "nl": "Canonical and candidate only differ by ASCII tokens that S0 normalizes.",
+  "lean": "∀ a b : ℕ, a + b = b + a",
+  "imports": ["Mathlib/Data/Nat/Basic"],
+  "candidate": "forall a b : ℕ, a + b = b + a"
+}

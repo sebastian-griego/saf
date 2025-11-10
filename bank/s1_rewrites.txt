@@ -1,0 +1,1 @@
+# Placeholder for future S1 safe rewrites (apply to BOTH sides before S0).

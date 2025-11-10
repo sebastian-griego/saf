@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Lean / Lake
+harness/lean_project/.lake/
+harness/lean_project/build/
+*.olean
+*.c
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Reports (optional - you may want to keep these, remove if you want to track them)
+# reports/*.json
+
+# Logs
+*.log
+

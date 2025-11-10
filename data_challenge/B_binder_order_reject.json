@@ -1,0 +1,8 @@
+{
+  "id": "B_binder_order_reject",
+  "domain": "nat",
+  "nl": "Binder order swapped (b, a) so normalization still shows the mismatch.",
+  "lean": "∀ a b : ℕ, a + b = b + a",
+  "imports": ["Mathlib/Data/Nat/Basic"],
+  "candidate": "∀ b a : ℕ, a + b = b + a"
+}

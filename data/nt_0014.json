@@ -1,0 +1,10 @@
+{
+  "id": "nt_0014",
+  "domain": "nat",
+  "nl": "For all natural numbers a, b, and c, if a ≤ b and b ≤ c then a ≤ c.",
+  "lean": "∀ a b c : ℕ, a ≤ b → b ≤ c → a ≤ c",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "candidate": "∀ a b c : ℕ, a ≤ b → b ≤ c → a ≤ c"
+}
