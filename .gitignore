@@ -14,6 +14,7 @@ harness/lean_project/.lake/
 harness/lean_project/build/
 *.olean
 *.c
+Check.lean
 
 # IDE
 .vscode/

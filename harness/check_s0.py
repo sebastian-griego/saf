@@ -1,11 +1,10 @@
 """SAF V0 harness: type-check and normalize Lean propositions for fidelity testing."""
-import argparse, json, subprocess
+import argparse, json, subprocess, tempfile
 from pathlib import Path
 from normalize import normalize_lean_prop
 
 def run_lean_typecheck(project_dir: Path, imports: list[str], candidate: str) -> bool:
     """Type-check the candidate proposition using Lean."""
-    check_file = project_dir / "Check.lean"
     lines = []
     import_map = {
         "Mathlib.Algebra.Divisibility": "Mathlib.Algebra.Divisibility.Basic"
@@ -19,16 +18,28 @@ def run_lean_typecheck(project_dir: Path, imports: list[str], candidate: str) ->
     lines.append(f"  {candidate}")
     lines.append("")
     lines.append("#check (_candidate : Prop)")
-    check_file.write_text("\n".join(lines), encoding="utf-8")
-
-    proc = subprocess.run(
-        ["lake", "env", "lean", "Check.lean"],
-        cwd=str(project_dir),
-        capture_output=True,
-        text=True,
-        shell=True
-    )
-    return proc.returncode == 0
+    
+    # Use a temporary file for Check.lean
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.lean', delete=False, encoding='utf-8') as tmp_file:
+        tmp_path = Path(tmp_file.name)
+        tmp_file.write("\n".join(lines))
+    
+    try:
+        # Use absolute path to the temp file
+        proc = subprocess.run(
+            ["lake", "env", "lean", str(tmp_path)],
+            cwd=str(project_dir),
+            capture_output=True,
+            text=True,
+            shell=False
+        )
+        return proc.returncode == 0
+    finally:
+        # Clean up the temporary file
+        try:
+            tmp_path.unlink()
+        except OSError:
+            pass  # Ignore errors if file was already deleted or doesn't exist
 
 def main():
     ap = argparse.ArgumentParser()

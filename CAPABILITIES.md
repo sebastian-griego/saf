@@ -72,8 +72,8 @@ See `bank/s1_rules.md` for detailed documentation.
 
 1. **Parentheses**: Extra parentheses around expressions are not normalized (e.g., `(a + b) = (b + a)` vs `a + b = b + a`)
 2. **Variable order**: Binder variable order matters (`∀ a b : T, P` vs `∀ b a : T, P`)
-3. **Alpha-equivalence**: Not handled (variable renaming)
-4. **Semantic equivalences**: Only definitional equivalences are handled in S1
+3. **Alpha-equivalence**: Handled in S1 (bound variables are renamed to canonical form)
+4. **Semantic equivalences**: Only definitional equivalences and α-renaming are handled in S1
 
 ## Usage
 
@@ -101,7 +101,7 @@ python harness/check_s0.py --data data --project harness/lean_project --out repo
 
 Potential improvements:
 1. Handle parentheses normalization in S0
-2. Consider alpha-equivalence for variable renaming
-3. Add more S1 rules (conservatively, with justification)
-4. Improve error messages and diagnostics
+2. Add more S1 rules (conservatively, with justification)
+3. Improve error messages and diagnostics
+4. Consider handling variable order normalization (if semantically safe)
 

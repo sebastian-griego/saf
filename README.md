@@ -8,7 +8,7 @@ faithfully expresses the **same mathematical proposition** as a canonical one �
 
 **Why this matters (short):** Formal proofs are easy to *verify* (they compile), but **statement auto‑formalization**
 (the mapping NL → Lean *statement*) lacks a trusted benchmark. This harness fills that gap and produces clean
-accept/reject decisions and error labels (syntax, unknown id, type mismatch, etc.).
+accept/reject decisions based on type-checking and normalized string comparison.
 
 > Truth requires a proof; **fidelity** is what we measure here.
 > This is the missing evaluator that model builders and data pipelines can use before admitting NL↔Lean pairs.
@@ -54,7 +54,8 @@ accept/reject decisions and error labels (syntax, unknown id, type mismatch, etc
    python harness\check_s0.py --data .\data --project .\harness\lean_project --s1
    ```
 
-4) Inspect `reports\demo_run.json` to see **accepted/rejected** items and an **error taxonomy** summary.
+4) Inspect `reports\demo_run.json` to see **accepted/rejected** items. Rejected items include a `reason` field
+   (`type_check_failed` or `normalized_mismatch`) and normalized strings for comparison.
 
 ---
 
@@ -63,10 +64,14 @@ accept/reject decisions and error labels (syntax, unknown id, type mismatch, etc
 ```
 saf_v0_new/
   README.md
-  WHY.md                 # Why this is useful to the field
   SPEC.md                # What "same statement" means in S0/S1
+  WHY.md                 # Why this is useful to the field
+  SETUP.md               # Detailed setup and toolchain documentation
+  CAPABILITIES.md        # Detailed capabilities and limitations
   data/                  # Test items: canonical Lean + NL + imports
   data_challenge/        # Challenge test cases
+  bank/
+    s1_rules.md          # S1 normalization rules documentation
   harness/
     check_s0.py          # Main harness: type-check → normalize → compare
     normalize.py         # S0/S1 normalization
@@ -77,19 +82,21 @@ saf_v0_new/
     verify_toolchain.ps1 # Verify frozen toolchain setup
   .github/workflows/     # CI workflow for automated testing
   reports/               # JSON reports written here
-  SETUP.md              # Detailed setup and toolchain documentation
 ```
 
 ---
 
 ## How to read the decision
 
-- **Type‑check pass**: candidate parses and has type `Prop` under the item’s imports.
-- **S0 comparison**: after deterministic normalization, candidate string must match the canonical string exactly.
-- **If mismatch**: normalized strings are included in the report for comparison.
-- **If type‑check fails**: reason is `type_check_failed`.
+The harness returns `accepted` or `rejected` for each test case:
 
-> S0 is strict by design to be *obviously correct*. Use `--s1` to enable semantic rewrites for equivalent forms.
+- **Type‑check pass**: candidate must parse and have type `Prop` under the item's imports.
+- **Normalization comparison**: after deterministic normalization (S0 or S1), candidate string must match the canonical string exactly.
+- **Rejection reasons**:
+  - `type_check_failed`: candidate failed to type-check (syntax error, unknown identifier, type mismatch, etc.)
+  - `normalized_mismatch`: type-check passed but normalized strings don't match (includes both normalized strings in the report)
+
+> S0 is strict by design to be *obviously correct*. Use `--s1` to enable definitionally equivalent notation rewrites.
 
 ## Toolchain & Reproducibility
 
