@@ -21,14 +21,24 @@ def _ascii_to_unicode(s: str) -> str:
     return s
 
 def _normalize_binders(s: str) -> str:
-    """Canonicalize binder blocks: '∀ a b : T, P' → '∀ (a b : T), P'"""
+    """Canonicalize binder blocks: '∀ a b : T, P' → '∀ (a b : T), P'
+    
+    Handles both '∀ a : T, P' and '∀a : T, P' (with or without space after quantifier).
+    Also handles '∀ (a : T), P' which is already in canonical form.
+    """
     def repl(m):
         quant = m.group(1)
+        # Check if already has parentheses
+        if m.group(2).strip().startswith('('):
+            return m.group(0)  # Already canonical
         vars_ = re.sub(r"\s+", " ", m.group(2).strip())
         typ   = re.sub(r"\s+", " ", m.group(3).strip())
         rest  = m.group(4) if m.lastindex >= 4 else ""
         return f"{quant} ({vars_} : {typ}), {rest}"
-    return re.sub(r"(∀|∃)\s+((?:[A-Za-z_][A-Za-z_0-9']*\s*)+)\s*:\s*([^,]+),\s*(.*)", repl, s)
+    # Match: quantifier (optional space) vars : type , rest
+    # Also handle already parenthesized: quantifier (vars : type), rest
+    pattern = r"(∀|∃)\s*((?:\([^)]+\))|(?:[A-Za-z_][A-Za-z_0-9']*(?:\s+[A-Za-z_][A-Za-z_0-9']*)*))\s*:\s*([^,]+),\s*(.*)"
+    return re.sub(pattern, repl, s)
 
 def _punct_space(s: str) -> str:
     """Normalize spaces around punctuation and common operators."""
@@ -47,19 +57,40 @@ def _punct_space(s: str) -> str:
     return s
 
 def _normalize_s1(s: str) -> str:
-    """S1 normalization: semantic rewrites applied to both canonical and candidate."""
-    def repl_not_exists(m):
-        return f"∀ {m.group(1)}, ¬ {m.group(2)}"
-    s = re.sub(r"¬\s*∃\s*(\([^)]+\)),\s*(.+)", repl_not_exists, s)
+    """
+    S1 normalization: Notation-level equalities that are definitionally equivalent.
     
+    Rules (see bank/s1_rules.md):
+    1. x ≠ y → ¬ (x = y)  (definitional: ≠ is notation for ¬ (=))
+    2. a ≥ b → b ≤ a      (definitional: ≥ is notation for flipped ≤)
+    
+    Applied to both canonical and candidate for conservative equivalence checking.
+    """
+    # Rule 2: a ≥ b → b ≤ a (apply before Rule 1 to avoid conflicts)
     def repl_ge(m):
-        return f"{m.group(2).strip()} ≤ {m.group(1).strip()}"
-    s = re.sub(r"([A-Za-z_ℕℤ0-9][A-Za-z_ℕℤ0-9'\+\-*/ ]*(?:\([^)]*\))?)\s*≥\s*([A-Za-z_ℕℤ0-9][A-Za-z_ℕℤ0-9'\+\-*/ ]*(?:\([^)]*\))?)", repl_ge, s)
+        left = m.group(1).strip()
+        right = m.group(2).strip()
+        return f"{right} ≤ {left}"
+    # Match expressions separated by ≥, avoiding over-matching
+    s = re.sub(
+        r"([A-Za-z_ℕℤ0-9][A-Za-z_ℕℤ0-9'+\-*/ ]*(?:\([^)]*\))?)\s*≥\s*([A-Za-z_ℕℤ0-9][A-Za-z_ℕℤ0-9'+\-*/ ]*(?:\([^)]*\))?)",
+        repl_ge,
+        s
+    )
     
+    # Rule 1: x ≠ y → ¬ (x = y)
     def repl_neq(m):
-        return f"¬ ({m.group(1).strip()} = {m.group(2).strip()})"
-    s = re.sub(r"([A-Za-z_ℕℤ0-9][A-Za-z_ℕℤ0-9'\+\-*/ ]*(?:\([^)]*\))?)\s*≠\s*([A-Za-z_ℕℤ0-9][A-Za-z_ℕℤ0-9'\+\-*/ ]*(?:\([^)]*\))?)", repl_neq, s)
+        left = m.group(1).strip()
+        right = m.group(2).strip()
+        return f"¬ ({left} = {right})"
+    # Match expressions separated by ≠, but not if already in form ¬ (x = y)
+    s = re.sub(
+        r"([A-Za-z_ℕℤ0-9][A-Za-z_ℕℤ0-9'+\-*/ ]*(?:\([^)]*\))?)\s*≠\s*([A-Za-z_ℕℤ0-9][A-Za-z_ℕℤ0-9'+\-*/ ]*(?:\([^)]*\))?)",
+        repl_neq,
+        s
+    )
     
+    # Re-normalize spacing after all rewrites
     s = _punct_space(s)
     return s.strip()
 

@@ -100,6 +100,21 @@ saf_v0_new/
 
 The toolchain is frozen to ensure reproducible results across different machines and CI environments. See [SETUP.md](SETUP.md) for detailed setup instructions and verification steps.
 
+## Current Capabilities
+
+**S0 Normalization** (always applied):
+- Whitespace collapse, ASCII→Unicode conversion
+- Binder canonicalization (`∀ a : T, P` → `∀ (a : T), P`)
+- Operator spacing normalization
+- **Test results**: 20/20 accepted in `data/` directory
+
+**S1 Normalization** (optional, `--s1` flag):
+- Conservative, definitionally equivalent notation rewrites
+- Rules: `x ≠ y` → `¬ (x = y)`, `a ≥ b` → `b ≤ a`
+- **Test results**: 2/8 accepted in `data_challenge/` (correctly rejects non-equivalent forms)
+- See [bank/s1_rules.md](bank/s1_rules.md) for rule documentation
+- See [CAPABILITIES.md](CAPABILITIES.md) for detailed capabilities and limitations
+
 ## Extending
 
 - **Add items**: copy any file in `data/`, edit `nl`, `lean`, and `imports`. Keep NL unambiguous.
