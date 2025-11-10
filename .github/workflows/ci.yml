@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Set up Lean
+        uses: leanprover/elan-setup@v1
+        with:
+          toolchain: leanprover/lean4:v4.25.0-rc2
+          enable-mathematica: false
+      
+      - name: Verify toolchain
+        run: |
+          lean --version
+          lake --version
+      
+      - name: Set up Lean project
+        working-directory: harness/lean_project
+        run: |
+          lake update
+          lake build
+          lake env lean --version
+      
+      - name: Run S0 tests
+        run: |
+          python harness/check_s0.py --data data --project harness/lean_project --out reports/ci_s0.json
+      
+      - name: Run S1 tests
+        run: |
+          python harness/check_s0.py --data data_challenge --project harness/lean_project --out reports/ci_s1.json --s1
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: reports/ci_*.json
+
