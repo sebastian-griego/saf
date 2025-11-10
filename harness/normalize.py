@@ -60,6 +60,8 @@ def _punct_space(s: str) -> str:
     s = re.sub(r"\s*↔\s*", " ↔ ", s)
     s = re.sub(r"\s*→\s*", " → ", s)
     s = re.sub(r"\s*≠\s*", " ≠ ", s)
+    s = re.sub(r"\s*∧\s*", " ∧ ", s)
+    s = re.sub(r"\s*∨\s*", " ∨ ", s)
     return s
 
 def _normalize_s1(s: str) -> str:

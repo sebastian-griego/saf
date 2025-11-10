@@ -1,6 +1,6 @@
-import Mathlib.Data.Nat.Basic
+import Mathlib.Data.Int.Basic
 
 def _candidate : Prop :=
-  ∀ a b : ℕ, a ≥ b ∧ ∃ k, b + k = a
+  ∀ a b : ℤ, a ≠ b ∧ a ≠ b
 
 #check (_candidate : Prop)
