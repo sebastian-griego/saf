@@ -1,13 +1,4 @@
-"""
-check_s0.py — SAF V0 harness
-
-For each item:
-  1) Type-check the candidate proposition using Lean
-  2) Normalize both canonical and candidate with S0 passes
-  3) Compare normalized strings - accept if identical
-
-This tests statement fidelity (syntax and formatting), not truth.
-"""
+"""SAF V0 harness: type-check and normalize Lean propositions for fidelity testing."""
 import argparse, json, subprocess
 from pathlib import Path
 from normalize import normalize_lean_prop
