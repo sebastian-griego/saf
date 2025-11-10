@@ -1,10 +1,15 @@
 {
   "summary": {
     "counts": {
-      "accepted": 19,
-      "rejected": 1
+      "accepted": 20,
+      "rejected": 0
     },
-    "total": 20
+    "total": 20,
+    "tier_breakdown": {
+      "S0": 20,
+      "S1": 0,
+      "S3-Lite": 0
+    }
   },
   "results": [
     {
@@ -89,11 +94,8 @@
     },
     {
       "id": "nt_0017",
-      "status": "rejected",
-      "tier": "S0",
-      "reason": "normalized_mismatch",
-      "canonical_norm": "∀ (a : ℕ), a + 0 = a",
-      "candidate_norm": "∀a : ℕ, a + 0 = a"
+      "status": "accepted",
+      "tier": "S0"
     },
     {
       "id": "nt_0018",

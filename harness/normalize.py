@@ -1,11 +1,7 @@
 """Normalization for Lean proposition strings: S0 (formatting) and S1 (semantic rewrites)."""
 import re
 import unicodedata
-from typing import Dict, List, Tuple, Optional, Union
-from enum import Enum
-
-# Source of truth for S1 normalization rules
-S1_RULES_FILE = "bank/s1_rules.md"
+from typing import List, Tuple
 
 ASCII_TO_UNICODE = [
     (r"<->", "↔"),

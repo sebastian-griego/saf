@@ -1,0 +1,78 @@
+{
+  "summary": {
+    "counts": {
+      "accepted": 0,
+      "rejected": 6
+    },
+    "total": 6,
+    "track_c": {
+      "total_nearmiss": 6,
+      "false_accepts": 0,
+      "correct_rejects": 6,
+      "fanm": 0.0,
+      "false_accept_details": []
+    }
+  },
+  "results": [
+    {
+      "id": "nt_0015_nearmiss_00_operator_swap_le_to_lt",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (a b : N), a ≤ b → ∃ k, b = a + k",
+      "candidate_norm": "∀ (a b : N), a < b → ∃ k, b = a + k",
+      "should_reject": true,
+      "nearmiss_type": "operator_swap_le_to_lt"
+    },
+    {
+      "id": "nt_0001_nearmiss_01_quantifier_swap_forall_to_exists",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (a b : N), a + b = b + a",
+      "candidate_norm": "∃ (a b : N), a + b = b + a",
+      "should_reject": true,
+      "nearmiss_type": "quantifier_swap_forall_to_exists"
+    },
+    {
+      "id": "nt_0001_nearmiss_02_type_swap_nat_to_int",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (a b : N), a + b = b + a",
+      "candidate_norm": "∀ (a b : Z), a + b = b + a",
+      "should_reject": true,
+      "nearmiss_type": "type_swap_nat_to_int"
+    },
+    {
+      "id": "nt_0001_nearmiss_03_sign_flip_plus_to_minus",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (a b : N), a + b = b + a",
+      "candidate_norm": "∀ (a b : N), a - b = b - a",
+      "should_reject": true,
+      "nearmiss_type": "sign_flip_plus_to_minus"
+    },
+    {
+      "id": "nt_0001_nearmiss_04_operator_swap_eq_to_neq",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (a b : N), a + b = b + a",
+      "candidate_norm": "∀ (a b : N), a + b ≠ b + a",
+      "should_reject": true,
+      "nearmiss_type": "operator_swap_eq_to_neq"
+    },
+    {
+      "id": "nt_0015_nearmiss_00_operator_swap_le_to_lt",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (a b : N), a ≤ b → ∃ k, b = a + k",
+      "candidate_norm": "∀ (a b : N), a < b → ∃ k, b = a + k",
+      "should_reject": true,
+      "nearmiss_type": "operator_swap_le_to_lt"
+    }
+  ]
+}
