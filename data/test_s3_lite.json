@@ -1,0 +1,11 @@
+{
+  "id": "test_s3_lite_001",
+  "domain": "nat",
+  "nl": "Test case for S3-Lite: contrapositive form that should be provable equivalent.",
+  "lean": "∀ a b : ℕ, a ≤ b → a + 1 ≤ b + 1",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "candidate": "∀ a b : ℕ, ¬(a + 1 ≤ b + 1) → ¬(a ≤ b)"
+}
+

@@ -63,9 +63,13 @@ def run_lean_equiv_proof(project_dir: Path, imports: list[str], canonical: str, 
     lines.append(f"  {candidate}")
     lines.append("")
     lines.append("theorem _equiv : _canonical ↔ _candidate := by")
-    # Try multiple tactics in order: rfl (definitional), simp_all (simplifications), tauto (propositional)
-    # If all fail, the proof will fail and we return False
-    lines.append("  rfl <|> simp_all <|> tauto")
+    # Use first tactic that succeeds (left to right)
+    # Try: rfl (definitional), simp_all (simplification), then constructor-based proofs
+    lines.append("  first")
+    lines.append("  | rfl")
+    lines.append("  | simp_all")
+    lines.append("  | (constructor; (intro; (simp_all <|> assumption)))")
+    lines.append("  | (classical; constructor; (intro; (contrapose!; assumption)))")
     
     # Use a temporary file for the proof
     with tempfile.NamedTemporaryFile(mode='w', suffix='.lean', delete=False, encoding='utf-8') as tmp_file:
@@ -83,13 +87,8 @@ def run_lean_equiv_proof(project_dir: Path, imports: list[str], canonical: str, 
             timeout=timeout
         )
         # If Lean compiles successfully (returncode == 0), the proof succeeded
-        # Check stderr for errors (Lean outputs errors to stderr)
-        if proc.returncode == 0:
-            # Check stderr for error messages
-            if proc.stderr and ("error" in proc.stderr.lower() or "failed" in proc.stderr.lower()):
-                return False
-            return True
-        return False
+        # Lean will not compile if there are errors, so returncode == 0 means success
+        return proc.returncode == 0
     except subprocess.TimeoutExpired:
         return False
     finally:

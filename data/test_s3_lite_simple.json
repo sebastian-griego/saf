@@ -1,0 +1,9 @@
+{
+  "id": "test_s3_lite_simple",
+  "domain": "prop",
+  "nl": "Simple test: double negation should be provable equivalent.",
+  "lean": "∀ P : Prop, P",
+  "imports": [],
+  "candidate": "∀ P : Prop, ¬¬P"
+}
+
