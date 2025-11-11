@@ -1,0 +1,121 @@
+{
+  "summary": {
+    "counts": {
+      "accepted": 20,
+      "rejected": 0
+    },
+    "total": 20,
+    "tier_breakdown": {
+      "S0": 20,
+      "S1": 0,
+      "S3-Lite": 0
+    },
+    "proof_budget": {
+      "typecheck_timeout_seconds": null,
+      "s3_timeout_seconds": null,
+      "max_tactic_steps": null
+    }
+  },
+  "results": [
+    {
+      "id": "nt_0001",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0002",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0003",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0004",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0005",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0006",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0007",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0008",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0009",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0010",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0011",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0012",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0013",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0014",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0015",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0016",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0017",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0018",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0019",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0020",
+      "status": "accepted",
+      "tier": "S0"
+    }
+  ]
+}

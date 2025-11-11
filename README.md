@@ -5,6 +5,7 @@ faithfully expresses the **same mathematical proposition** as a canonical one �
 
 - V0 implements **S0** (always on): type‑check + deterministic normalization + string equality.
 - **S1** (optional): semantic rewrites enabled with `--s1` flag (e.g., `x ≠ y` → `¬ (x = y)`, `a ≥ b` → `b ≤ a`).
+- **S3‑Lite** (optional): proof-based equivalence checking enabled with `--s3-lite` flag when S0/S1 normalization fails.
 
 **Why this matters (short):** Formal proofs are easy to *verify* (they compile), but **statement auto‑formalization**
 (the mapping NL → Lean *statement*) lacks a trusted benchmark. This harness fills that gap and produces clean
@@ -52,6 +53,8 @@ accept/reject decisions based on type-checking and normalized string comparison.
    ```powershell
    python harness\check_s0.py --data .\data --project .\harness\lean_project
    python harness\check_s0.py --data .\data --project .\harness\lean_project --s1
+   python harness\check_s0.py --data .\data --project .\harness\lean_project --s3-lite
+   python harness\check_s0.py --data .\data --project .\harness\lean_project --s1 --s3-lite --s3-classical --s3-timeout 10
    ```
 
 4) Inspect `reports\demo_run.json` to see **accepted/rejected** items. Rejected items include a `reason` field
@@ -121,6 +124,14 @@ The toolchain is frozen to ensure reproducible results across different machines
 - **Test results**: 2/8 accepted in `data_challenge/` (correctly rejects non-equivalent forms)
 - See [bank/s1_rules.md](bank/s1_rules.md) for rule documentation
 - See [CAPABILITIES.md](CAPABILITIES.md) for detailed capabilities and limitations
+
+**S3‑Lite** (optional, `--s3-lite` flag):
+- Proof-based equivalence checking when S0/S1 normalization fails
+- Attempts to prove `canonical ↔ candidate` using Lean tactics
+- **Permitted tactics**: `rfl` (definitional equality), `simp_all` with logic-only lemmas (`iff_true`, `iff_false`, `not_forall`, `not_exists`, `and_assoc`, `and_comm`, `or_comm`, `not_and`, `not_or`, `imp_true`, `true_imp`), `constructor`-based proofs, and classical reasoning with `contrapose!` (attempted by default as fallback)
+- **Classical reasoning**: Attempted by default as a fallback tactic; `--s3-classical` flag records preference in reports
+- **CLI flags**: `--s3-lite` (enable S3-Lite), `--s3-classical` (record classical preference), `--s3-timeout N` (timeout in seconds, default: 5)
+- **Important**: S3-Lite never changes S0/S1 accept/reject decisions; it only adds `s3_lite_attempted: true` and `s3_lite_succeeded: true` fields to the report when enabled
 
 ## Extending
 

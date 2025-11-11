@@ -1,7 +1,7 @@
 # S1 Normalization Rules
 
-**Version**: 2.0  
-**Last Updated**: 2025-01-10
+**Version**: 3.0  
+**Last Updated**: 2025-01-11
 
 ## Philosophy
 
@@ -122,6 +122,40 @@ S1 rules are applied to **both** canonical and candidate propositions before com
 
 **Note**: Operands are sorted lexicographically by their string representation for deterministic normalization. This ensures that `P ∧ Q` and `Q ∧ P` normalize to the same canonical form.
 
+### Rule 8: Associativity Normalization
+**Transformation**: 
+- `(P ∧ Q) ∧ R` → `P ∧ Q ∧ R` (flatten nested conjunctions)
+- `(P ∨ Q) ∨ R` → `P ∨ Q ∨ R` (flatten nested disjunctions)
+
+**Source**: Classical logic (associativity of conjunction and disjunction).
+
+**Justification**: Universally valid logical equivalences. Conjunction and disjunction are associative operations, so nested structures can be flattened without changing meaning.
+
+**Example**:
+- Input: `(P ∧ Q) ∧ R`
+- Output: `P ∧ Q ∧ R` (after flattening, then sorted lexicographically by Rule 7)
+- Input: `A ∨ (B ∨ C)`
+- Output: `A ∨ B ∨ C` (after flattening, then sorted lexicographically by Rule 7)
+
+**Note**: Associativity normalization (Rule 8) is applied before commutativity normalization (Rule 7), so nested structures are first flattened, then operands are sorted lexicographically for deterministic canonical form.
+
+### Rule 9: Binder Normalization
+**Transformation**: 
+- `∀ (x : T), ∀ (y : U), P` → `∀ (x : T) (y : U), P` (flatten nested universal quantifiers)
+- `∃ (x : T), ∃ (y : U), P` → `∃ (x : T) (y : U), P` (flatten nested existential quantifiers)
+
+**Source**: Lean syntax equivalence. In Lean, `∀ (x : T) (y : U), P` is definitionally equivalent to `∀ (x : T), ∀ (y : U), P` when the types are independent.
+
+**Justification**: Definitionally equivalent in Lean. When quantifiers of the same type are nested and the inner quantifier's type doesn't depend on the outer variable, the flattened form is equivalent. This normalization moves binders into a canonical shape.
+
+**Example**:
+- Input: `∀ (x : ℕ), ∀ (y : ℕ), x = y`
+- Output: `∀ (x₁ : ℕ) (x₂ : ℕ), x₁ = x₂` (after alpha-renaming and binder normalization)
+- Input: `∃ (a : ℕ), ∃ (b : ℕ), a + b = 0`
+- Output: `∃ (x₁ : ℕ) (x₂ : ℕ), x₁ + x₂ = 0` (after alpha-renaming and binder normalization)
+
+**Note**: This rule only applies when the nested quantifiers are of the same type (both `∀` or both `∃`). Mixed quantifiers like `∀ (x : T), ∃ (y : U), P` are not normalized, as the order matters. The rule is applied recursively, so deeply nested quantifiers are flattened step by step.
+
 ## Out of Scope
 
 The following are **NOT** included in S1, as they require additional structure or are not universally valid:
@@ -138,15 +172,17 @@ Rules are applied in order:
 1. **Rule 0** (Alpha-renaming) is applied first to normalize bound variable names
 2. **Rule 2** (Greater-Equal) is applied before Rule 1 to avoid conflicts
 3. **Rule 1** (Not-Equals) converts `≠` to negated equality
-4. **Rule 3** (Logical Structure Normalization) applies Rules 3-7 recursively:
+4. **Rule 3** (Logical Structure Normalization) applies Rules 3-9 recursively:
    - **Rule 3**: Double negation elimination (`¬¬P → P`)
    - **Rule 4**: De Morgan's laws (push negations inward)
    - **Rule 5**: Quantifier negation (push negations through quantifiers)
    - **Rule 6**: Contrapositive normalization (convert implications to contrapositive form)
+   - **Rule 8**: Associativity normalization (flatten nested `∧` and `∨` structures)
    - **Rule 7**: Commutativity normalization (sort `∧` and `∨` operands lexicographically)
+   - **Rule 9**: Binder normalization (flatten nested quantifiers of same type)
 5. Spacing is re-normalized after all rules
 
-The logical structure normalization (Rules 3-7) is applied recursively to handle nested structures. All rules are deterministic, ensuring that equivalent propositions normalize to the same canonical form.
+The logical structure normalization (Rules 3-9) is applied recursively to handle nested structures. Associativity (Rule 8) is applied before commutativity (Rule 7) to ensure nested structures are flattened before sorting. All rules are deterministic, ensuring that equivalent propositions normalize to the same canonical form.
 
 Both canonical and candidate propositions undergo the same transformations, ensuring equivalent notation is accepted.
 

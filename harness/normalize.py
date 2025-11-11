@@ -138,10 +138,58 @@ def _alpha_rename(s: str) -> str:
             return text
         
         # Pattern to match quantifier at the start: ∀ (binders), or ∃ (binders),
-        # Note: [^)]+ will not handle nested parens in types, but S0 normalization
-        # should ensure types are simple enough for this to work
-        quantifier_pattern = r'^(∀|∃)\s*\(([^)]+)\)\s*,(.*)$'
+        # Handle both single binder: ∀ (x : T), P
+        # and multiple binders: ∀ (x : T) (y : U), P
+        # First try to match multiple binders format: (x : T) (y : U), ...
+        multi_binder_pattern = r'^(∀|∃)\s*((?:\([^)]+\)\s*)+),\s*(.*)$'
+        multi_match = re.match(multi_binder_pattern, text)
         
+        if multi_match:
+            quant = multi_match.group(1)
+            binders_str = multi_match.group(2).strip()
+            rest = multi_match.group(3).strip()
+            
+            # Extract all binders: (x : T), (y : U), etc.
+            binder_pattern = r'\(([^)]+)\)'
+            all_binders = re.findall(binder_pattern, binders_str)
+            
+            if all_binders:
+                # Collect all variables from all binders
+                all_var_names = []
+                all_binder_parts = []
+                var_index = 0
+                renamings = {}
+                
+                for binder_content in all_binders:
+                    var_names, type_str = parse_binder_vars(binder_content)
+                    if var_names:
+                        canonical_vars = []
+                        for var_name in var_names:
+                            canonical_name = get_canonical_name(var_index)
+                            renamings[var_name] = canonical_name
+                            canonical_vars.append(canonical_name)
+                            var_index += 1
+                        
+                        if type_str:
+                            new_binder = f"{' '.join(canonical_vars)} : {type_str}"
+                        else:
+                            new_binder = ' '.join(canonical_vars)
+                        all_binder_parts.append(f"({new_binder})")
+                    else:
+                        all_binder_parts.append(f"({binder_content})")
+                
+                # Process the body recursively
+                processed_body = process_expression(rest)
+                
+                # Apply renamings to the processed body
+                for old_name, new_name in sorted(renamings.items(), key=lambda x: len(x[0]), reverse=True):
+                    processed_body = rename_variable_occurrences(processed_body, old_name, new_name)
+                
+                combined_binders = ' '.join(all_binder_parts)
+                return f"{quant} {combined_binders}, {processed_body}"
+        
+        # Fall back to single binder pattern: ∀ (binders), ...
+        quantifier_pattern = r'^(∀|∃)\s*\(([^)]+)\)\s*,\s*(.*)$'
         match = re.match(quantifier_pattern, text)
         if not match:
             # No quantifier at the start, return as-is
@@ -172,10 +220,6 @@ def _alpha_rename(s: str) -> str:
             new_binder = f"{' '.join(canonical_vars)} : {type_str}"
         else:
             new_binder = ' '.join(canonical_vars)
-        
-        # First, apply renamings to the body to handle any free occurrences
-        # of variables that are about to be bound (shouldn't happen in well-formed prop, but be safe)
-        # Actually, we should process nested quantifiers first, then apply renamings
         
         # Process the body recursively (this will handle nested quantifiers)
         processed_body = process_expression(rest)
@@ -251,7 +295,9 @@ def _normalize_logical_structure(s: str) -> str:
     2. De Morgan's laws: ¬(P ∧ Q) → (¬P ∨ ¬Q), ¬(P ∨ Q) → (¬P ∧ ¬Q)
     3. Quantifier negation: ¬∃ (x : T), P → ∀ (x : T), ¬P, ¬∀ (x : T), P → ∃ (x : T), ¬P
     4. Contrapositive: P → Q → ¬Q → ¬P
-    5. Commutativity: Normalize order of ∧ and ∨ operands (lexicographic)
+    5a. Associativity: Flatten nested ∧ and ∨ structures: (P ∧ Q) ∧ R → P ∧ Q ∧ R
+    5b. Commutativity: Normalize order of ∧ and ∨ operands (lexicographic)
+    6. Binder normalization: Flatten nested quantifiers of same type: ∀ (x : T), ∀ (y : U), P → ∀ (x : T) (y : U), P
     
     Returns normalized formula string.
     """
@@ -396,7 +442,32 @@ def _normalize_logical_structure(s: str) -> str:
                 # Chain the converted implications
                 return normalize_rec(' → '.join(result_parts))
         
-        # Rule 5: Commutativity - normalize order of ∧ and ∨ operands
+        # Rule 5a: Associativity - flatten nested ∧ and ∨ structures
+        for op in ['∧', '∨']:
+            parts = _split_by_operator(expr, op)
+            if len(parts) >= 2:
+                # Flatten nested structures: if any part is a parenthesized expression
+                # with the same operator at top level, extract its operands
+                flattened_parts = []
+                for part in parts:
+                    part_stripped = part.strip()
+                    # Check if part is parenthesized and contains the same operator at top level
+                    if part_stripped.startswith('(') and part_stripped.endswith(')'):
+                        inner = part_stripped[1:-1].strip()
+                        inner_parts = _split_by_operator(inner, op)
+                        if len(inner_parts) >= 2:
+                            # Flatten: add inner operands directly
+                            flattened_parts.extend(inner_parts)
+                        else:
+                            flattened_parts.append(part)
+                    else:
+                        flattened_parts.append(part)
+                
+                # If we flattened anything, recurse
+                if len(flattened_parts) > len(parts):
+                    return normalize_rec(f" {op} ".join(flattened_parts))
+        
+        # Rule 5b: Commutativity - normalize order of ∧ and ∨ operands
         for op in ['∧', '∨']:
             parts = _split_by_operator(expr, op)
             if len(parts) >= 2:
@@ -425,6 +496,22 @@ def _normalize_logical_structure(s: str) -> str:
             quant = quant_match.group(1)
             binder = quant_match.group(2).strip()
             body = quant_match.group(3).strip()
+            
+            # Rule 6: Binder normalization - flatten nested quantifiers of the same type
+            # Check if body starts with the same quantifier
+            nested_quant_match = re.match(r'^(∀|∃)\s*\(([^)]+)\)\s*,\s*(.+)$', body)
+            if nested_quant_match and nested_quant_match.group(1) == quant:
+                # Found nested quantifier of same type: ∀ (x : T), ∀ (y : U), P
+                # Normalize to: ∀ (x : T) (y : U), P
+                inner_binder = nested_quant_match.group(2).strip()
+                inner_body = nested_quant_match.group(3).strip()
+                # Combine binders: (x : T) and (y : U) -> (x : T) (y : U)
+                combined_binder = f"{binder}) ({inner_binder}"
+                norm_body = normalize_rec(inner_body)
+                result = f"{quant} ({combined_binder}), {norm_body}"
+                if result != expr:
+                    return normalize_rec(result)
+            
             norm_body = normalize_rec(body)
             result = f"{quant} ({binder}), {norm_body}"
             if result != expr:
@@ -452,7 +539,9 @@ def _normalize_s1(s: str) -> str:
        - De Morgan: ¬(P ∧ Q) → (¬P ∨ ¬Q), ¬(P ∨ Q) → (¬P ∧ ¬Q)
        - Quantifier negation: ¬∃ (x : T), P → ∀ (x : T), ¬P, ¬∀ (x : T), P → ∃ (x : T), ¬P
        - Contrapositive: P → Q → ¬Q → ¬P
+       - Associativity: Flatten nested ∧ and ∨ structures: (P ∧ Q) ∧ R → P ∧ Q ∧ R
        - Commutativity: Normalize order of ∧ and ∨ operands (lexicographic)
+       - Binder normalization: Flatten nested quantifiers of same type: ∀ (x : T), ∀ (y : U), P → ∀ (x : T) (y : U), P
     
     Applied to both canonical and candidate for conservative equivalence checking.
     """
@@ -485,6 +574,10 @@ def _normalize_s1(s: str) -> str:
     
     # Rule 3: Logical structure normalization (applied recursively)
     s = _normalize_logical_structure(s)
+    
+    # Re-run alpha-renaming after binder normalization to fix variable names
+    # (binder normalization may combine scopes, creating duplicate variable names)
+    s = _alpha_rename(s)
     
     # Re-normalize spacing after all rewrites
     s = _punct_space(s)
