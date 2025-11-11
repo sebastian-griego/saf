@@ -384,63 +384,86 @@ def _normalize_logical_structure(s: str) -> str:
                 norm_body = f"¬{norm_body}"
             return normalize_rec(f"∃ ({binder}), {norm_body}")
         
+        # Handle quantifiers FIRST (before implications) to avoid infinite recursion
+        # Process body recursively, which may contain implications
+        quant_match = re.match(r'^(∀|∃)\s*\(([^)]+)\)\s*,\s*(.+)$', expr)
+        if quant_match:
+            quant = quant_match.group(1)
+            binder = quant_match.group(2).strip()
+            body = quant_match.group(3).strip()
+            
+            # Rule 9: Binder normalization - flatten nested quantifiers of the same type
+            # Check if body starts with the same quantifier
+            nested_quant_match = re.match(r'^(∀|∃)\s*\(([^)]+)\)\s*,\s*(.+)$', body)
+            if nested_quant_match and nested_quant_match.group(1) == quant:
+                # Found nested quantifier of same type: ∀ (x : T), ∀ (y : U), P
+                # Normalize to: ∀ (x : T) (y : U), P
+                inner_binder = nested_quant_match.group(2).strip()
+                inner_body = nested_quant_match.group(3).strip()
+                # Combine binders: (x : T) and (y : U) -> (x : T) (y : U)
+                combined_binder = f"{binder}) ({inner_binder}"
+                norm_body = normalize_rec(inner_body)
+                result = f"{quant} ({combined_binder}), {norm_body}"
+                if result != expr:
+                    return normalize_rec(result)
+            
+            # Normalize the body (which may contain implications, quantifiers, etc.)
+            norm_body = normalize_rec(body)
+            result = f"{quant} ({binder}), {norm_body}"
+            if result != expr:
+                return result
+        
         # Rule 4: Contrapositive: P → Q → ¬Q → ¬P
-        # Normalize implications to contrapositive form
+        # Only apply to implications WITHOUT quantifiers to avoid infinite recursion
+        # Quantifiers are handled above, so any quantifiers in implication parts are already processed
         impl_parts = _split_by_operator(expr, '→')
-        if len(impl_parts) == 2:
-            # Single implication: P → Q becomes ¬Q → ¬P
-            left = normalize_rec(impl_parts[0])
-            right = normalize_rec(impl_parts[1])
+        if len(impl_parts) >= 2:
+            # Check if any part contains quantifiers - if so, skip contrapositive
+            # (quantifiers should have been processed already by the code above)
+            has_quantifiers = False
+            for part in impl_parts:
+                if '∀' in part or '∃' in part:
+                    has_quantifiers = True
+                    break
             
-            # Check if already in contrapositive form (both sides negated)
-            left_negated = left.startswith('¬')
-            right_negated = right.startswith('¬')
-            
-            # If already in contrapositive form (both negated), it's canonical
-            if left_negated and right_negated:
-                # Already in contrapositive form, return as-is
+            # Skip contrapositive if quantifiers are present (they cause recursion issues)
+            # Just normalize the parts and return
+            if has_quantifiers:
+                normalized_parts = [normalize_rec(p) for p in impl_parts]
+                result = ' → '.join(normalized_parts)
+                if result != expr:
+                    return result
                 return expr
             
-            # Convert to contrapositive: P → Q becomes ¬Q → ¬P
-            # For canonical form, we want: negated right → negated left
-            if right_negated:
-                neg_right = right  # Already negated
-            else:
+            # Apply contrapositive only for simple implications (no quantifiers)
+            if len(impl_parts) == 2:
+                # Single implication: P → Q becomes ¬Q → ¬P
+                left = normalize_rec(impl_parts[0])
+                right = normalize_rec(impl_parts[1])
+                
+                # Check if already in contrapositive form (right side negated)
+                right_negated = right.startswith('¬')
+                left_negated = left.startswith('¬')
+                
+                # If already in contrapositive form (right negated), we're done
+                if right_negated:
+                    # Ensure left is also negated for canonical form
+                    if not left_negated:
+                        left = f"¬{left}"
+                    return f"{right} → {left}"
+                
+                # Convert to contrapositive: P → Q becomes ¬Q → ¬P
                 neg_right = f"¬{right}"
-            
-            if left_negated:
-                neg_left = left  # Already negated
+                neg_left = f"¬{left}" if not left_negated else left
+                
+                # Don't recurse - return the contrapositive form
+                return f"{neg_right} → {neg_left}"
             else:
-                neg_left = f"¬{left}"
-            
-            # Canonical form: negated right → negated left (i.e., ¬Q → ¬P)
-            result = f"{neg_right} → {neg_left}"
-            if result != expr:
-                return result  # Don't recurse to avoid infinite loop
-        elif len(impl_parts) > 2:
-            # Multiple implications: chain them, converting each to contrapositive
-            normalized_parts = [normalize_rec(p) for p in impl_parts]
-            result_parts = []
-            for i in range(len(normalized_parts) - 1):
-                left = normalized_parts[i]
-                right = normalized_parts[i + 1]
-                
-                # Convert to contrapositive
-                if right.startswith('¬'):
-                    neg_right = normalize_rec(right[1:].strip())
-                else:
-                    neg_right = f"¬{right}"
-                
-                if left.startswith('¬'):
-                    neg_left = normalize_rec(left[1:].strip())
-                else:
-                    neg_left = f"¬{left}"
-                
-                result_parts.append(f"{neg_right} → {neg_left}")
-            
-            if result_parts:
-                # Chain the converted implications
-                return normalize_rec(' → '.join(result_parts))
+                # Multiple implications: normalize each part, then convert chain
+                # For simplicity, just normalize parts without full contrapositive conversion
+                # (full contrapositive of chains is complex and can cause recursion)
+                normalized_parts = [normalize_rec(p) for p in impl_parts]
+                return ' → '.join(normalized_parts)
         
         # Rule 5a: Associativity - flatten nested ∧ and ∨ structures
         for op in ['∧', '∨']:
@@ -487,33 +510,6 @@ def _normalize_logical_structure(s: str) -> str:
             inner = expr[1:-1].strip()
             normalized_inner = normalize_rec(inner)
             result = f"({normalized_inner})"
-            if result != expr:
-                return result
-        
-        # Handle quantifiers (process body recursively)
-        quant_match = re.match(r'^(∀|∃)\s*\(([^)]+)\)\s*,\s*(.+)$', expr)
-        if quant_match:
-            quant = quant_match.group(1)
-            binder = quant_match.group(2).strip()
-            body = quant_match.group(3).strip()
-            
-            # Rule 6: Binder normalization - flatten nested quantifiers of the same type
-            # Check if body starts with the same quantifier
-            nested_quant_match = re.match(r'^(∀|∃)\s*\(([^)]+)\)\s*,\s*(.+)$', body)
-            if nested_quant_match and nested_quant_match.group(1) == quant:
-                # Found nested quantifier of same type: ∀ (x : T), ∀ (y : U), P
-                # Normalize to: ∀ (x : T) (y : U), P
-                inner_binder = nested_quant_match.group(2).strip()
-                inner_body = nested_quant_match.group(3).strip()
-                # Combine binders: (x : T) and (y : U) -> (x : T) (y : U)
-                combined_binder = f"{binder}) ({inner_binder}"
-                norm_body = normalize_rec(inner_body)
-                result = f"{quant} ({combined_binder}), {norm_body}"
-                if result != expr:
-                    return normalize_rec(result)
-            
-            norm_body = normalize_rec(body)
-            result = f"{quant} ({binder}), {norm_body}"
             if result != expr:
                 return result
         

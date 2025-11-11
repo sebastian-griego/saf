@@ -1,0 +1,10 @@
+# Python dependencies for SAF V0 harness
+# 
+# Core dependencies: None (uses standard library only)
+#
+# Optional dependencies:
+# lean-interact: For BEq+ metric support (optional, falls back to direct Lean implementation if not installed)
+# Install with: pip install lean-interact
+
+lean-interact>=0.2.0; python_version >= "3.8"
+

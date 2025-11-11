@@ -12,6 +12,5 @@ and doubles as a **data gate** and **error analytics** tool.
 - **Data engineers** run it as an **admission gate** for NL↔Lean pairs (reject noisy pairs early).
 - **Researchers** use the structured diffs to spot where formalizers go wrong (quantifiers/types/relations).
 
-This is exactly the “missing evaluator” Axiom points to: proof auto‑formalization is easy to check (compiles or not),
 but **statement auto‑formalization lacks a good benchmark**. SAF fills that gap with something you can understand line‑by‑line
 and grow safely. (See `SPEC.md` for precise acceptance rules.)
