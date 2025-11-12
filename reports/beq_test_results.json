@@ -1,0 +1,171 @@
+{
+  "summary": {
+    "counts": {
+      "accepted": 20,
+      "rejected": 3
+    },
+    "total": 23,
+    "tier_breakdown": {
+      "S0": 20,
+      "S1": 0,
+      "S3-Lite": 0,
+      "BEq+": 0
+    },
+    "proof_budget": {
+      "typecheck_timeout_seconds": null,
+      "s3_timeout_seconds": null,
+      "beq_plus_timeout_seconds": 30,
+      "max_tactic_steps": null
+    }
+  },
+  "results": [
+    {
+      "id": "beq_test_1",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (a b : N), a + b = b + a",
+      "candidate_norm": "∀ (x y : N), x + y = y + x",
+      "beq_plus_attempted": true,
+      "beq_plus_left": false,
+      "beq_plus_right": false,
+      "beq_plus_strategy": "fallback",
+      "beq_plus_logs": {
+        "stdout_stderr": "C:\\Users\\sebas\\AppData\\Local\\Temp\\tmpavyu5q0v.lean:19:20: error: unexpected token ';'; expected '{' or tactic\nC:\\Users\\sebas\\AppData\\Local\\Temp\\tmpavyu5q0v.lean:36:20: error: unexpected token ';'; expected '{' or tactic\n\n",
+        "elapsed_s": 5.167113542556763
+      }
+    },
+    {
+      "id": "beq_test_2",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (P Q : Prop), P ∨ Q",
+      "candidate_norm": "∀ (P Q : Prop), (¬P → Q)",
+      "beq_plus_attempted": true,
+      "beq_plus_left": false,
+      "beq_plus_right": false,
+      "beq_plus_strategy": "fallback",
+      "beq_plus_logs": {
+        "stdout_stderr": "timeout after 30s: Command '['lake', 'env', 'lean', 'C:\\\\Users\\\\sebas\\\\AppData\\\\Local\\\\Temp\\\\tmpnnf7cb_0.lean']' timed out after 30 seconds",
+        "elapsed_s": 30.030957221984863
+      }
+    },
+    {
+      "id": "beq_test_3",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (x : N), (x = 0) ∨ (x > 0)",
+      "candidate_norm": "∀ (x : N), ¬(x = 0) → x > 0",
+      "beq_plus_attempted": true,
+      "beq_plus_left": false,
+      "beq_plus_right": false,
+      "beq_plus_strategy": "fallback",
+      "beq_plus_logs": {
+        "stdout_stderr": "C:\\Users\\sebas\\AppData\\Local\\Temp\\tmpgz1wav7n.lean:19:20: error: unexpected token ';'; expected '{' or tactic\nC:\\Users\\sebas\\AppData\\Local\\Temp\\tmpgz1wav7n.lean:12:31: error: unsolved goals\nh : _P\nâŠ¢ _Q\nC:\\Users\\sebas\\AppData\\Local\\Temp\\tmpgz1wav7n.lean:36:20: error: unexpected token ';'; expected '{' or tactic\n\n",
+        "elapsed_s": 17.18040895462036
+      }
+    },
+    {
+      "id": "nt_0001",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0002",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0003",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0004",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0005",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0006",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0007",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0008",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0009",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0010",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0011",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0012",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0013",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0014",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0015",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0016",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0017",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0018",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0019",
+      "status": "accepted",
+      "tier": "S0"
+    },
+    {
+      "id": "nt_0020",
+      "status": "accepted",
+      "tier": "S0"
+    }
+  ]
+}

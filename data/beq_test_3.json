@@ -1,0 +1,11 @@
+{
+  "id": "beq_test_3",
+  "domain": "nat",
+  "nl": "Equivalence of positivity conditions: zero or positive equivalent to not-zero implies positive",
+  "lean": "∀ x : ℕ, (x = 0) ∨ (x > 0)",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "candidate": "∀ x : ℕ, ¬(x = 0) → x > 0"
+}
+

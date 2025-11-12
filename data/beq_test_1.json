@@ -1,0 +1,11 @@
+{
+  "id": "beq_test_1",
+  "domain": "nat",
+  "nl": "Commutativity of addition: equivalent statements with variable names swapped (should be provable with simp or rfl)",
+  "lean": "∀ a b : ℕ, a + b = b + a",
+  "imports": [
+    "Mathlib/Data/Nat/Basic"
+  ],
+  "candidate": "∀ x y : ℕ, x + y = y + x"
+}
+

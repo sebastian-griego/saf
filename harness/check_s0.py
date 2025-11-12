@@ -4,14 +4,7 @@ from pathlib import Path
 from normalize import normalize_lean_prop
 from run_lean_pretty_print import run_lean_pretty_print
 from pretty_print_lean import STRICT_PP_OPTIONS
-
-# Try to import lean-interact for BEq+ support
-try:
-    from lean_interact import beq_plus
-    BEQ_PLUS_AVAILABLE = True
-except ImportError:
-    BEQ_PLUS_AVAILABLE = False
-    beq_plus = None
+from beq_plus import beq_plus_equiv, BeqPlusResult
 
 def run_lean_typecheck(project_dir: Path, imports: list[str], candidate: str, timeout: int = None) -> tuple[bool, str]:
     """Type-check the candidate proposition using Lean.
@@ -191,144 +184,6 @@ def run_lean_equiv_proof(project_dir: Path, imports: list[str], canonical: str, 
         except OSError:
             pass  # Ignore errors if file was already deleted or doesn't exist
 
-def run_beq_plus_check(project_dir: Path, imports: list[str], canonical: str, candidate: str, timeout: int = 30) -> tuple[bool, str]:
-    """Check statement equivalence using BEq+ metric.
-    
-    BEq+ proves each direction (P → Q and Q → P) with a deterministic bundle of tactics.
-    This is a "heavy" tier that can catch equivalences missed by normalization.
-    
-    Reference: "Reliable Evaluation and Benchmarks for Statement Autoformalization" (EMNLP 2025)
-    Paper: https://aclanthology.org/2025.emnlp-main.907.pdf
-    Code: https://github.com/augustepoiroux/LeanInteract
-    
-    NOTE: This is a placeholder implementation. The actual BEq+ implementation from LeanInteract
-    should be used when available. This fallback implements a simplified version based on the
-    paper's description: BEq+ is deterministic, proves both directions separately, and uses
-    a bundle of tactics that run efficiently on CPU without requiring large language models.
-    
-    Args:
-        project_dir: Path to Lean project directory
-        imports: List of imports for the proof
-        canonical: Canonical proposition
-        candidate: Candidate proposition
-        timeout: Timeout in seconds (default: 30)
-    
-    Returns:
-        Tuple of (success: bool, error_message: str)
-    """
-    # Try to use lean-interact package if available
-    # TODO: Verify the actual API from https://github.com/augustepoiroux/LeanInteract
-    # The actual BEq+ implementation may have a different interface
-    if BEQ_PLUS_AVAILABLE and beq_plus is not None:
-        try:
-            # Attempt to use the official BEq+ implementation from LeanInteract
-            # Note: This API call is a placeholder - the actual API may differ
-            # Check https://github.com/augustepoiroux/LeanInteract for the correct usage
-            if hasattr(beq_plus, 'check_equivalence'):
-                result = beq_plus.check_equivalence(
-                    canonical,
-                    candidate,
-                    imports=imports,
-                    project_dir=str(project_dir),
-                    timeout=timeout
-                )
-                return (result.success, result.error_message if hasattr(result, 'error_message') else "")
-            elif hasattr(beq_plus, 'beq_plus'):
-                # Alternative API name
-                result = beq_plus.beq_plus(
-                    canonical,
-                    candidate,
-                    imports=imports,
-                    project_dir=str(project_dir),
-                    timeout=timeout
-                )
-                return (result.success, result.error_message if hasattr(result, 'error_message') else "")
-        except Exception as e:
-            # If lean-interact API fails, fall back to direct Lean implementation
-            # Log the error for debugging
-            import sys
-            print(f"Warning: lean-interact BEq+ API failed: {e}", file=sys.stderr)
-            print("Falling back to direct Lean implementation.", file=sys.stderr)
-    
-    # Fallback: Simplified BEq+ implementation using Lean directly
-    # Based on paper description: BEq+ proves both directions with deterministic tactics
-    # This is a simplified approximation - the actual BEq+ may use a more sophisticated
-    # tactic bundle. See the paper and LeanInteract repository for the official implementation.
-    #
-    # The paper states BEq+ is:
-    # - Deterministic
-    # - Runs efficiently on CPU
-    # - Does not require a 20B LLM prover
-    # - Proves P → Q and Q → P separately
-    # - Correlates strongly with human judgment
-    lines = []
-    import_map = {
-        "Mathlib.Algebra.Divisibility": "Mathlib.Algebra.Divisibility.Basic"
-    }
-    for imp in imports:
-        normalized_imp = imp.replace("/", ".")
-        normalized_imp = import_map.get(normalized_imp, normalized_imp)
-        lines.append(f"import {normalized_imp}")
-    lines.append("")
-    lines.append("def _canonical : Prop :=")
-    lines.append(f"  {canonical}")
-    lines.append("")
-    lines.append("def _candidate : Prop :=")
-    lines.append(f"  {candidate}")
-    lines.append("")
-    # BEq+ proves both directions: canonical → candidate and candidate → canonical
-    # Using a deterministic bundle of tactics
-    # TODO: Align with actual BEq+ implementation from LeanInteract
-    # The actual implementation may use a more sophisticated tactic sequence
-    lines.append("theorem _beq_plus_forward : _canonical → _candidate := by")
-    lines.append("  -- BEq+ deterministic tactic bundle for forward direction")
-    lines.append("  -- TODO: Replace with actual BEq+ tactic bundle from LeanInteract")
-    lines.append("  intro h")
-    lines.append("  first")
-    lines.append("  | rfl  -- Definitional equality")
-    lines.append("  | assumption  -- Use hypothesis")
-    lines.append("  | simp_all  -- Simplification (may be too permissive - actual BEq+ may restrict this)")
-    lines.append("")
-    lines.append("theorem _beq_plus_backward : _candidate → _canonical := by")
-    lines.append("  -- BEq+ deterministic tactic bundle for backward direction")
-    lines.append("  -- TODO: Replace with actual BEq+ tactic bundle from LeanInteract")
-    lines.append("  intro h")
-    lines.append("  first")
-    lines.append("  | rfl  -- Definitional equality")
-    lines.append("  | assumption  -- Use hypothesis")
-    lines.append("  | simp_all  -- Simplification (may be too permissive - actual BEq+ may restrict this)")
-    lines.append("")
-    # Combine both directions to show equivalence
-    lines.append("theorem _beq_plus_equiv : _canonical ↔ _candidate := by")
-    lines.append("  constructor")
-    lines.append("  · exact _beq_plus_forward")
-    lines.append("  · exact _beq_plus_backward")
-    
-    # Use a temporary file for the proof
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.lean', delete=False, encoding='utf-8') as tmp_file:
-        tmp_path = Path(tmp_file.name)
-        tmp_file.write("\n".join(lines))
-    
-    try:
-        # Run with timeout
-        proc = subprocess.run(
-            ["lake", "env", "lean", str(tmp_path)],
-            cwd=str(project_dir),
-            capture_output=True,
-            text=True,
-            shell=False,
-            timeout=timeout
-        )
-        # If Lean compiles successfully (returncode == 0), BEq+ succeeded
-        return (proc.returncode == 0, proc.stderr or "")
-    except subprocess.TimeoutExpired:
-        return (False, "BEq+ timeout expired")
-    finally:
-        # Clean up the temporary file
-        try:
-            tmp_path.unlink()
-        except OSError:
-            pass  # Ignore errors if file was already deleted or doesn't exist
 
 def main():
     ap = argparse.ArgumentParser()
@@ -345,13 +200,6 @@ def main():
     ap.add_argument("--beq-plus-timeout", type=int, default=30, help="Timeout for BEq+ proofs in seconds (default: 30)")
     ap.add_argument("--max-tactic-steps", type=int, default=None, help="Maximum tactic steps (for documentation/auditing; not directly enforced by Lean)")
     args = ap.parse_args()
-    
-    # Check if BEq+ is requested but not available
-    if args.beq_plus and not BEQ_PLUS_AVAILABLE:
-        print("Warning: --beq-plus requested but lean-interact package not found.")
-        print("Install it with: pip install lean-interact")
-        print("Falling back to direct Lean implementation of BEq+.")
-        print("")
 
     data_dir = Path(args.data)
     project_dir = Path(args.project)
@@ -449,18 +297,39 @@ def main():
                 continue
 
         # Step 4: If S0/S1/S3-Lite failed and BEq+ is enabled, try BEq+ metric
-        beq_plus_success = None
-        beq_plus_stderr = None
+        beq_result = None
         if args.beq_plus:
-            beq_plus_success, beq_plus_stderr = run_beq_plus_check(project_dir, imports, canonical, candidate, timeout=args.beq_plus_timeout)
-            if beq_plus_success:
+            # Convert imports list to string format
+            import_map = {
+                "Mathlib.Algebra.Divisibility": "Mathlib.Algebra.Divisibility.Basic"
+            }
+            import_lines = []
+            for imp in imports:
+                normalized_imp = imp.replace("/", ".")
+                normalized_imp = import_map.get(normalized_imp, normalized_imp)
+                import_lines.append(f"import {normalized_imp}")
+            imports_str = "\n".join(import_lines) if import_lines else "import Mathlib"
+            
+            beq_result = beq_plus_equiv(
+                project_dir=project_dir,
+                imports=imports_str,
+                canonical=canonical,
+                candidate=candidate,
+                timeout_s=args.beq_plus_timeout,
+                classical=args.s3_classical
+            )
+            
+            if beq_result.success:
                 result = {
                     "id": cid,
                     "status": "accepted",
-                    "tier": "BEq+"
+                    "tier": "BEq+",
+                    "reason": "beq_plus_equivalent",
+                    "beq_plus_left": beq_result.left_proved,
+                    "beq_plus_right": beq_result.right_proved,
+                    "beq_plus_strategy": beq_result.strategy,
+                    "beq_plus_logs": beq_result.logs
                 }
-                if beq_plus_stderr:
-                    result["stderr"] = beq_plus_stderr
                 results.append(result)
                 counts["accepted"] += 1
                 tier_counts["BEq+"] = tier_counts.get("BEq+", 0) + 1
@@ -485,11 +354,12 @@ def main():
             # Include stderr from failed proof attempt if available
             if not proof_success and proof_stderr:
                 result["stderr"] = proof_stderr
-        if args.beq_plus:
+        if args.beq_plus and beq_result is not None:
             result["beq_plus_attempted"] = True
-            # Include stderr from failed BEq+ attempt if available
-            if not beq_plus_success and beq_plus_stderr:
-                result["beq_plus_stderr"] = beq_plus_stderr
+            result["beq_plus_left"] = beq_result.left_proved
+            result["beq_plus_right"] = beq_result.right_proved
+            result["beq_plus_strategy"] = beq_result.strategy
+            result["beq_plus_logs"] = beq_result.logs
         results.append(result)
         counts["rejected"] += 1
 
@@ -498,8 +368,7 @@ def main():
         "typecheck_timeout_seconds": args.typecheck_timeout,
         "s3_timeout_seconds": args.s3_timeout if args.s3_lite else None,
         "beq_plus_timeout_seconds": args.beq_plus_timeout if args.beq_plus else None,
-        "max_tactic_steps": args.max_tactic_steps,
-        "beq_plus_available": BEQ_PLUS_AVAILABLE
+        "max_tactic_steps": args.max_tactic_steps
     }
     
     # Build run manifest with PP options if using strict PP

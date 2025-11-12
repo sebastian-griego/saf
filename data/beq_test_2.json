@@ -1,0 +1,11 @@
+{
+  "id": "beq_test_2",
+  "domain": "prop",
+  "nl": "Classical logic equivalence: P or Q is equivalent to not-P implies Q (requires classical logic)",
+  "lean": "∀ P Q : Prop, P ∨ Q ↔ (¬P → Q)",
+  "imports": [
+    "Mathlib"
+  ],
+  "candidate": "∀ P Q : Prop, (¬P → Q) ↔ P ∨ Q"
+}
+
