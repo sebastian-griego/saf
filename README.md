@@ -47,6 +47,12 @@ accept/reject decisions based on type-checking and normalized string comparison.
    Should show: `Lean (version 4.25.0-rc2, ...)`
 
    **Note**: The toolchain is frozen in `lean-toolchain` and mathlib is pinned in `lakefile.lean` for reproducibility.
+   
+   **Performance Tip**: The harness automatically checks if the project is built before running tests to prevent slow automatic builds. You can also manually ensure it's built:
+   ```powershell
+   # From repository root
+   .\scripts\ensure_built.ps1
+   ```
 
    See [SETUP.md](SETUP.md) for detailed setup instructions and CI configuration.
 

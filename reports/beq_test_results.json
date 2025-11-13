@@ -1,12 +1,12 @@
 {
   "summary": {
     "counts": {
-      "accepted": 20,
-      "rejected": 3
+      "accepted": 0,
+      "rejected": 23
     },
     "total": 23,
     "tier_breakdown": {
-      "S0": 20,
+      "S0": 0,
       "S1": 0,
       "S3-Lite": 0,
       "BEq+": 0
@@ -24,35 +24,22 @@
       "status": "rejected",
       "tier": "S0",
       "reason": "normalized_mismatch",
-      "canonical_norm": "∀ (a b : N), a + b = b + a",
-      "candidate_norm": "∀ (x y : N), x + y = y + x",
+      "canonical_norm": "∀ (P Q : Prop), P ∧ Q",
+      "candidate_norm": "∀ (P Q : Prop), Q ∧ P",
       "beq_plus_attempted": true,
       "beq_plus_left": false,
       "beq_plus_right": false,
       "beq_plus_strategy": "fallback",
       "beq_plus_logs": {
-        "stdout_stderr": "C:\\Users\\sebas\\AppData\\Local\\Temp\\tmpavyu5q0v.lean:19:20: error: unexpected token ';'; expected '{' or tactic\nC:\\Users\\sebas\\AppData\\Local\\Temp\\tmpavyu5q0v.lean:36:20: error: unexpected token ';'; expected '{' or tactic\n\n",
-        "elapsed_s": 5.167113542556763
+        "lean_interact_error": "LeanInteract unavailable: Failed to build the REPL at C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\n--------------------------------------------------\nstdout:\nâœ– [1/5] Building REPL.Lean.InfoTree (3ms)\nerror: no such file or directory (error code: 2)\n  file: C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Lean\nâœ– [2/5] Building REPL.Lean.ContextInfo (1ms)\nerror: no such file or directory (error code: 2)\n  file: C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Lean\nâœ– [5/10] Building REPL.Util.Path\nerror: no such file or directory (error code: 2)\n  file: C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Util\nâœ– [7/10] Building REPL.Util.Pickle (1ms)\nerror: no such file or directory (error code: 2)\n  file: C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Util\nâœ– [11/26] Building REPL.Util.Trie\nerror: no such file or directory (error code: 2)\n  file: C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Util\nâœ– [22/26] Building REPL.Frontend (5.9s)\ntrace: .> LEAN_PATH=C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean c:\\Users\\sebas\\.elan\\toolchains\\leanprover--lean4---v4.25.0-rc2\\bin\\lean.exe C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\REPL\\Frontend.lean -o C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Frontend.olean -i C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Frontend.ilean -c C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\ir\\REPL\\Frontend.c --setup C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\ir\\REPL\\Frontend.setup.json --json\ninfo: stderr:\nfailed to write 'C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Frontend.olean': failed to create file 'C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Frontend.olean'\nerror: Lean exited with code 1\nSome required targets logged failures:\n- REPL.Lean.InfoTree\n- REPL.Lean.ContextInfo\n- REPL.Util.Path\n- REPL.Util.Pickle\n- REPL.Util.Trie\n- REPL.Frontend\n\n--------------------------------------------------\nstderr:\nerror: build failed\n\n--------------------------------------------------",
+        "fallback": {
+          "stdout_stderr": "timeout after 30s: Command '['lake', 'env', 'lean', 'C:\\\\Users\\\\sebas\\\\AppData\\\\Local\\\\Temp\\\\tmphc24h5au.lean']' timed out after 30 seconds",
+          "elapsed_s": 30.03098464012146
+        }
       }
     },
     {
       "id": "beq_test_2",
-      "status": "rejected",
-      "tier": "S0",
-      "reason": "normalized_mismatch",
-      "canonical_norm": "∀ (P Q : Prop), P ∨ Q",
-      "candidate_norm": "∀ (P Q : Prop), (¬P → Q)",
-      "beq_plus_attempted": true,
-      "beq_plus_left": false,
-      "beq_plus_right": false,
-      "beq_plus_strategy": "fallback",
-      "beq_plus_logs": {
-        "stdout_stderr": "timeout after 30s: Command '['lake', 'env', 'lean', 'C:\\\\Users\\\\sebas\\\\AppData\\\\Local\\\\Temp\\\\tmpnnf7cb_0.lean']' timed out after 30 seconds",
-        "elapsed_s": 30.030957221984863
-      }
-    },
-    {
-      "id": "beq_test_3",
       "status": "rejected",
       "tier": "S0",
       "reason": "normalized_mismatch",
@@ -63,109 +50,151 @@
       "beq_plus_right": false,
       "beq_plus_strategy": "fallback",
       "beq_plus_logs": {
-        "stdout_stderr": "C:\\Users\\sebas\\AppData\\Local\\Temp\\tmpgz1wav7n.lean:19:20: error: unexpected token ';'; expected '{' or tactic\nC:\\Users\\sebas\\AppData\\Local\\Temp\\tmpgz1wav7n.lean:12:31: error: unsolved goals\nh : _P\nâŠ¢ _Q\nC:\\Users\\sebas\\AppData\\Local\\Temp\\tmpgz1wav7n.lean:36:20: error: unexpected token ';'; expected '{' or tactic\n\n",
-        "elapsed_s": 17.18040895462036
+        "lean_interact_error": "LeanInteract unavailable: Failed to build the REPL at C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\n--------------------------------------------------\nstdout:\nâœ– [1/5] Building REPL.Lean.InfoTree (3ms)\nerror: no such file or directory (error code: 2)\n  file: C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Lean\nâœ– [2/5] Building REPL.Lean.ContextInfo\nerror: no such file or directory (error code: 2)\n  file: C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Lean\nâœ– [5/10] Building REPL.Util.Path\nerror: no such file or directory (error code: 2)\n  file: C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Util\nâœ– [7/10] Building REPL.Util.Pickle\nerror: no such file or directory (error code: 2)\n  file: C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Util\nâœ– [11/26] Building REPL.Util.Trie\nerror: no such file or directory (error code: 2)\n  file: C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Util\nâœ– [22/26] Building REPL.Frontend (4.0s)\ntrace: .> LEAN_PATH=C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean c:\\Users\\sebas\\.elan\\toolchains\\leanprover--lean4---v4.25.0-rc2\\bin\\lean.exe C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\REPL\\Frontend.lean -o C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Frontend.olean -i C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Frontend.ilean -c C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\ir\\REPL\\Frontend.c --setup C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\ir\\REPL\\Frontend.setup.json --json\ninfo: stderr:\nfailed to write 'C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Frontend.olean': failed to create file 'C:\\Users\\sebas\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages\\lean_interact\\cache\\augustepoiroux\\repl\\repl_v1.3.6_lean-toolchain-v4.25.0-rc2\\.lake\\build\\lib\\lean\\REPL\\Frontend.olean'\nerror: Lean exited with code 1\nSome required targets logged failures:\n- REPL.Lean.InfoTree\n- REPL.Lean.ContextInfo\n- REPL.Util.Path\n- REPL.Util.Pickle\n- REPL.Util.Trie\n- REPL.Frontend\n\n--------------------------------------------------\nstderr:\nerror: build failed\n\n--------------------------------------------------",
+        "fallback": {
+          "stdout_stderr": "timeout after 30s: Command '['lake', 'env', 'lean', 'C:\\\\Users\\\\sebas\\\\AppData\\\\Local\\\\Temp\\\\tmpd99ye6yx.lean']' timed out after 30 seconds",
+          "elapsed_s": 30.030874490737915
+        }
+      }
+    },
+    {
+      "id": "beq_test_3",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (a b : N), a + b = b + a",
+      "candidate_norm": "∀ (b a : N), b + a = a + b",
+      "beq_plus_attempted": true,
+      "beq_plus_left": false,
+      "beq_plus_right": false,
+      "beq_plus_strategy": "fallback",
+      "beq_plus_logs": {
+        "lean_interact_error": "LeanInteract unavailable: Command '['lake', 'build']' returned non-zero exit status 3221226091.",
+        "fallback": {
+          "stdout_stderr": "\n",
+          "elapsed_s": 0.05697154998779297
+        }
       }
     },
     {
       "id": "nt_0001",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0002",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0003",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0004",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0005",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0006",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0007",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0008",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0009",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0010",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0011",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0012",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0013",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0014",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0015",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0016",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0017",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0018",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0019",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     },
     {
       "id": "nt_0020",
-      "status": "accepted",
-      "tier": "S0"
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
     }
   ]
 }

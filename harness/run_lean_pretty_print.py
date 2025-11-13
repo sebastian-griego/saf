@@ -3,9 +3,16 @@
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import Optional, Dict
 from pretty_print_lean import generate_pretty_print_script, parse_pretty_printed_output
 
-def run_lean_pretty_print(project_dir: Path, imports: list[str], prop: str, timeout: int = None) -> tuple[bool, str, str]:
+def run_lean_pretty_print(
+    project_dir: Path,
+    imports: list[str],
+    prop: str,
+    timeout: int = None,
+    lean_env: Optional[Dict[str, str]] = None,
+) -> tuple[bool, str, str]:
     """Pretty-print a proposition using Lean with strict PP options.
     
     Args:
@@ -27,14 +34,16 @@ def run_lean_pretty_print(project_dir: Path, imports: list[str], prop: str, time
         tmp_file.write(script)
     
     try:
-        # Run Lean
+        # Run Lean (reuse cached environment if provided to avoid repeated `lake env`)
+        cmd = ["lean", str(tmp_path)] if lean_env else ["lake", "env", "lean", str(tmp_path)]
         proc = subprocess.run(
-            ["lake", "env", "lean", str(tmp_path)],
+            cmd,
             cwd=str(project_dir),
             capture_output=True,
             text=True,
             shell=False,
-            timeout=timeout
+            timeout=timeout,
+            env=lean_env
         )
         
         # Combine stdout and stderr (Lean outputs to both)

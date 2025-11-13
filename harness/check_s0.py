@@ -1,12 +1,19 @@
 """SAF V0 harness: type-check and normalize Lean propositions for fidelity testing."""
-import argparse, json, subprocess, tempfile
+import argparse, json, subprocess, sys, tempfile
 from pathlib import Path
 from normalize import normalize_lean_prop
 from run_lean_pretty_print import run_lean_pretty_print
 from pretty_print_lean import STRICT_PP_OPTIONS
 from beq_plus import beq_plus_equiv, BeqPlusResult
+from ensure_built import ensure_project_built, load_lake_environment
 
-def run_lean_typecheck(project_dir: Path, imports: list[str], candidate: str, timeout: int = None) -> tuple[bool, str]:
+def run_lean_typecheck(
+    project_dir: Path,
+    imports: list[str],
+    candidate: str,
+    timeout: int = None,
+    lean_env: dict[str, str] | None = None,
+) -> tuple[bool, str]:
     """Type-check the candidate proposition using Lean.
     
     Returns:
@@ -33,13 +40,15 @@ def run_lean_typecheck(project_dir: Path, imports: list[str], candidate: str, ti
     
     try:
         # Use absolute path to the temp file
+        cmd = ["lean", str(tmp_path)] if lean_env else ["lake", "env", "lean", str(tmp_path)]
         proc = subprocess.run(
-            ["lake", "env", "lean", str(tmp_path)],
+            cmd,
             cwd=str(project_dir),
             capture_output=True,
             text=True,
             shell=False,
-            timeout=timeout
+            timeout=timeout,
+            env=lean_env
         )
         return (proc.returncode == 0, proc.stderr or "")
     except subprocess.TimeoutExpired:
@@ -51,7 +60,16 @@ def run_lean_typecheck(project_dir: Path, imports: list[str], candidate: str, ti
         except OSError:
             pass  # Ignore errors if file was already deleted or doesn't exist
 
-def run_lean_equiv_proof(project_dir: Path, imports: list[str], canonical: str, candidate: str, timeout: int = 5, s3_lite: bool = False, use_classical: bool = False) -> tuple[bool, str]:
+def run_lean_equiv_proof(
+    project_dir: Path,
+    imports: list[str],
+    canonical: str,
+    candidate: str,
+    timeout: int = 5,
+    s3_lite: bool = False,
+    use_classical: bool = False,
+    lean_env: dict[str, str] | None = None,
+) -> tuple[bool, str]:
     """Prove equivalence between canonical and candidate propositions using Lean (S3-Lite).
     
     Uses a logic-only equivalence tier with lean-native decision procedures:
@@ -164,13 +182,15 @@ def run_lean_equiv_proof(project_dir: Path, imports: list[str], canonical: str, 
     
     try:
         # Run with timeout
+        cmd = ["lean", str(tmp_path)] if lean_env else ["lake", "env", "lean", str(tmp_path)]
         proc = subprocess.run(
-            ["lake", "env", "lean", str(tmp_path)],
+            cmd,
             cwd=str(project_dir),
             capture_output=True,
             text=True,
             shell=False,
-            timeout=timeout
+            timeout=timeout,
+            env=lean_env
         )
         # If Lean compiles successfully (returncode == 0), the proof succeeded
         # Lean will not compile if there are errors, so returncode == 0 means success
@@ -199,12 +219,29 @@ def main():
     ap.add_argument("--s3-timeout", type=int, default=5, help="Timeout for S3-Lite proofs in seconds (default: 5)")
     ap.add_argument("--beq-plus-timeout", type=int, default=30, help="Timeout for BEq+ proofs in seconds (default: 30)")
     ap.add_argument("--max-tactic-steps", type=int, default=None, help="Maximum tactic steps (for documentation/auditing; not directly enforced by Lean)")
+    ap.add_argument("--skip-build-check", action="store_true", help="Skip automatic build check (use if project is already built)")
     args = ap.parse_args()
 
     data_dir = Path(args.data)
     project_dir = Path(args.project)
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Ensure the project is built before running tests (prevents slow automatic builds)
+    if not args.skip_build_check:
+        print("Checking if Lean project is built...")
+        if not ensure_project_built(project_dir, verbose=True):
+            print("✗ Failed to build Lean project. Please run 'lake build' manually in the project directory.")
+            sys.exit(1)
+    else:
+        print("Skipping build check (--skip-build-check flag set)")
+
+    # Capture the Lean environment once so subsequent runs avoid `lake env`
+    try:
+        lean_env = load_lake_environment(project_dir, verbose=True)
+    except RuntimeError as exc:
+        print(f"Failed to compute Lean environment: {exc}")
+        sys.exit(1)
 
     items = []
     for p in sorted(data_dir.glob("*.json")):
@@ -221,7 +258,13 @@ def main():
         candidate = item.get("candidate", canonical)
 
         # Step 1: Type-check the candidate
-        typecheck_success, typecheck_stderr = run_lean_typecheck(project_dir, imports, candidate, timeout=args.typecheck_timeout)
+        typecheck_success, typecheck_stderr = run_lean_typecheck(
+            project_dir,
+            imports,
+            candidate,
+            timeout=args.typecheck_timeout,
+            lean_env=lean_env
+        )
         if not typecheck_success:
             tier = "S1" if args.s1 else "S0"
             result = {
@@ -242,10 +285,18 @@ def main():
         if args.strict_pp:
             # Use Lean's pretty-printer with strict PP options
             canonical_success, lhs, canonical_stderr = run_lean_pretty_print(
-                project_dir, imports, canonical, timeout=args.typecheck_timeout
+                project_dir,
+                imports,
+                canonical,
+                timeout=args.typecheck_timeout,
+                lean_env=lean_env
             )
             candidate_success, rhs, candidate_stderr = run_lean_pretty_print(
-                project_dir, imports, candidate, timeout=args.typecheck_timeout
+                project_dir,
+                imports,
+                candidate,
+                timeout=args.typecheck_timeout,
+                lean_env=lean_env
             )
             
             if not canonical_success or not candidate_success:
@@ -281,7 +332,16 @@ def main():
         proof_success = None
         proof_stderr = None
         if args.s3_lite:
-            proof_success, proof_stderr = run_lean_equiv_proof(project_dir, imports, canonical, candidate, timeout=args.s3_timeout, s3_lite=True, use_classical=args.s3_classical)
+            proof_success, proof_stderr = run_lean_equiv_proof(
+                project_dir,
+                imports,
+                canonical,
+                candidate,
+                timeout=args.s3_timeout,
+                s3_lite=True,
+                use_classical=args.s3_classical,
+                lean_env=lean_env
+            )
             if proof_success:
                 result = {
                     "id": cid,
@@ -316,7 +376,8 @@ def main():
                 canonical=canonical,
                 candidate=candidate,
                 timeout_s=args.beq_plus_timeout,
-                classical=args.s3_classical
+                classical=args.s3_classical,
+                lean_env=lean_env
             )
             
             if beq_result.success:

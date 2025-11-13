@@ -1,0 +1,71 @@
+{
+  "summary": {
+    "counts": {
+      "accepted": 0,
+      "rejected": 3
+    },
+    "total": 3,
+    "tier_breakdown": {
+      "S0": 0,
+      "S1": 0,
+      "S3-Lite": 0,
+      "BEq+": 0
+    },
+    "proof_budget": {
+      "typecheck_timeout_seconds": null,
+      "s3_timeout_seconds": null,
+      "beq_plus_timeout_seconds": 3,
+      "max_tactic_steps": null
+    }
+  },
+  "results": [
+    {
+      "id": "beq_test_1",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (P Q : Prop), P ∧ Q",
+      "candidate_norm": "∀ (P Q : Prop), Q ∧ P",
+      "beq_plus_attempted": true,
+      "beq_plus_left": false,
+      "beq_plus_right": false,
+      "beq_plus_strategy": "fallback",
+      "beq_plus_logs": {
+        "stdout_stderr": "timeout after 3s: Command '['lake', 'env', 'lean', 'C:\\\\Users\\\\sebas\\\\AppData\\\\Local\\\\Temp\\\\tmp8bfvhfn2.lean']' timed out after 3 seconds",
+        "elapsed_s": 3.025219678878784
+      }
+    },
+    {
+      "id": "beq_test_2",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (x : N), (x = 0) ∨ (x > 0)",
+      "candidate_norm": "∀ (x : N), ¬(x = 0) → x > 0",
+      "beq_plus_attempted": true,
+      "beq_plus_left": false,
+      "beq_plus_right": false,
+      "beq_plus_strategy": "fallback",
+      "beq_plus_logs": {
+        "stdout_stderr": "timeout after 3s: Command '['lake', 'env', 'lean', 'C:\\\\Users\\\\sebas\\\\AppData\\\\Local\\\\Temp\\\\tmp0w61yvzd.lean']' timed out after 3 seconds",
+        "elapsed_s": 3.0148239135742188
+      }
+    },
+    {
+      "id": "beq_test_3",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (a b : N), a + b = b + a",
+      "candidate_norm": "∀ (b a : N), b + a = a + b",
+      "beq_plus_attempted": true,
+      "beq_plus_left": false,
+      "beq_plus_right": false,
+      "beq_plus_strategy": "fallback",
+      "beq_plus_logs": {
+        "stdout_stderr": "timeout after 3s: Command '['lake', 'env', 'lean', 'C:\\\\Users\\\\sebas\\\\AppData\\\\Local\\\\Temp\\\\tmphnq_hml_.lean']' timed out after 3 seconds",
+        "elapsed_s": 3.000835418701172
+      }
+    }
+  ]
+}
