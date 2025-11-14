@@ -12,11 +12,17 @@ from typing import Tuple, Dict, Any, Optional
 
 # --- Try LeanInteract (official) first ---------------------------------------
 _LI_OK = False
+_LI_BEQ_PLUS = None
 try:
     from lean_interact import LeanREPLConfig, LeanServer, Command, LocalProject  # type: ignore
-    _LI_OK = True
 except Exception:
     _LI_OK = False
+else:
+    _LI_OK = True
+    try:
+        from li_beq_plus_impl import beq_plus as _LI_BEQ_PLUS  # type: ignore
+    except Exception:
+        _LI_BEQ_PLUS = None
 
 
 @dataclass
@@ -26,6 +32,21 @@ class BeqPlusResult:
     right_proved: bool
     strategy: str        # "lean-interact" or "fallback"
     logs: Dict[str, Any] # raw info to include in reports for debugging
+
+
+def _prop_as_theorem(name: str, proposition: str) -> str:
+    """Wrap a raw proposition as a Lean theorem declaration (statement only)."""
+    prop_body = proposition.strip()
+    return f"theorem {name} : {prop_body} := by sorry"
+
+
+def _build_src_header(imports: str, classical: bool) -> str:
+    """Normalize header used by LeanInteract Auto server."""
+    header = imports.strip() or "import Mathlib"
+    if classical:
+        separator = "" if header.endswith("\n") else "\n"
+        header = f"{header}{separator}open Classical"
+    return header.strip()
 
 
 def _mk_lean_file(imports: str, p: str, q: str, classical: bool) -> str:
@@ -200,26 +221,63 @@ def beq_plus_equiv(
     project_dir = Path(project_dir).resolve()
     
     lean_code = _mk_lean_file(imports, canonical, candidate, classical)
-
     force_fallback = os.environ.get("BEQ_FORCE_FALLBACK", "").lower() in {"1", "true", "yes"}
-    li_error: str | None = None
+    li_errors: list[str] = []
 
+    # Preferred: delegate to LeanInteract's official BEq+ implementation.
+    if _LI_OK and _LI_BEQ_PLUS is not None and not force_fallback:
+        try:
+            cfg = LeanREPLConfig(project=LocalProject(directory=str(project_dir)), verbose=False)  # type: ignore
+            header = _build_src_header(imports, classical)
+            canonical_thm = _prop_as_theorem("_beq_canonical", canonical)
+            candidate_thm = _prop_as_theorem("_beq_candidate", candidate)
+            timeout_budget = timeout_s if timeout_s is not None else 30
+            start = time.time()
+            ok = _LI_BEQ_PLUS(
+                canonical_thm,
+                candidate_thm,
+                header,
+                cfg,
+                timeout_budget,
+                verbose=False,
+            )
+            elapsed = time.time() - start
+            logs = {
+                "elapsed_s": elapsed,
+                "timeout_s": timeout_budget,
+                "header": header,
+                "mode": "lean-interact-official",
+            }
+            return BeqPlusResult(
+                success=ok,
+                left_proved=ok,
+                right_proved=ok,
+                strategy="lean-interact-official",
+                logs=logs,
+            )
+        except Exception as exc:  # pragma: no cover - defensive
+            li_errors.append(f"LeanInteract BEq+ failed: {exc}")
+
+    # Fallback: reuse LeanInteract REPL to elaborate the conservative snippet.
     if _LI_OK and not force_fallback:
         try:
             left, right, info = _run_li(project_dir, lean_code, timeout_s)
+            if li_errors:
+                info = {"previous_errors": li_errors, "lean_interact_snippet": info}
             return BeqPlusResult(
                 success=left and right,
                 left_proved=left,
                 right_proved=right,
-                strategy="lean-interact",
+                strategy="lean-interact-snippet",
                 logs=info,
             )
         except Exception as exc:  # pragma: no cover - defensive
-            li_error = f"LeanInteract unavailable: {exc}"
+            li_errors.append(f"LeanInteract snippet failed: {exc}")
 
+    # Last resort: compile the snippet with lake/lean directly.
     left, right, info = _run_fallback(project_dir, lean_code, timeout_s, lean_env=lean_env)
-    if li_error:
-        info = {"lean_interact_error": li_error, "fallback": info}
+    if li_errors:
+        info = {"lean_interact_errors": li_errors, "fallback": info}
     return BeqPlusResult(
         success=left and right,
         left_proved=left,

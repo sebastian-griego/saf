@@ -218,6 +218,7 @@ def main():
     ap.add_argument("--typecheck-timeout", type=int, default=None, help="Timeout for type-checking in seconds (default: no timeout)")
     ap.add_argument("--s3-timeout", type=int, default=5, help="Timeout for S3-Lite proofs in seconds (default: 5)")
     ap.add_argument("--beq-plus-timeout", type=int, default=30, help="Timeout for BEq+ proofs in seconds (default: 30)")
+    ap.add_argument("--max-beq-plus-calls", type=int, default=None, help="Maximum number of BEq+ calls to run in this harness invocation")
     ap.add_argument("--max-tactic-steps", type=int, default=None, help="Maximum tactic steps (for documentation/auditing; not directly enforced by Lean)")
     ap.add_argument("--skip-build-check", action="store_true", help="Skip automatic build check (use if project is already built)")
     args = ap.parse_args()
@@ -250,6 +251,7 @@ def main():
     results = []
     counts = {"accepted": 0, "rejected": 0}
     tier_counts = {"S0": 0, "S1": 0, "S3-Lite": 0, "BEq+": 0}
+    beq_calls = 0
 
     for item in items:
         cid = item["id"]
@@ -358,29 +360,34 @@ def main():
 
         # Step 4: If S0/S1/S3-Lite failed and BEq+ is enabled, try BEq+ metric
         beq_result = None
+        beq_plus_skipped = False
         if args.beq_plus:
-            # Convert imports list to string format
-            import_map = {
-                "Mathlib.Algebra.Divisibility": "Mathlib.Algebra.Divisibility.Basic"
-            }
-            import_lines = []
-            for imp in imports:
-                normalized_imp = imp.replace("/", ".")
-                normalized_imp = import_map.get(normalized_imp, normalized_imp)
-                import_lines.append(f"import {normalized_imp}")
-            imports_str = "\n".join(import_lines) if import_lines else "import Mathlib"
+            if args.max_beq_plus_calls is not None and beq_calls >= args.max_beq_plus_calls:
+                beq_plus_skipped = True
+            else:
+                # Convert imports list to string format
+                import_map = {
+                    "Mathlib.Algebra.Divisibility": "Mathlib.Algebra.Divisibility.Basic"
+                }
+                import_lines = []
+                for imp in imports:
+                    normalized_imp = imp.replace("/", ".")
+                    normalized_imp = import_map.get(normalized_imp, normalized_imp)
+                    import_lines.append(f"import {normalized_imp}")
+                imports_str = "\n".join(import_lines) if import_lines else "import Mathlib"
+                
+                beq_result = beq_plus_equiv(
+                    project_dir=project_dir,
+                    imports=imports_str,
+                    canonical=canonical,
+                    candidate=candidate,
+                    timeout_s=args.beq_plus_timeout,
+                    classical=args.s3_classical,
+                    lean_env=lean_env
+                )
+                beq_calls += 1
             
-            beq_result = beq_plus_equiv(
-                project_dir=project_dir,
-                imports=imports_str,
-                canonical=canonical,
-                candidate=candidate,
-                timeout_s=args.beq_plus_timeout,
-                classical=args.s3_classical,
-                lean_env=lean_env
-            )
-            
-            if beq_result.success:
+            if beq_result is not None and beq_result.success:
                 result = {
                     "id": cid,
                     "status": "accepted",
@@ -415,12 +422,17 @@ def main():
             # Include stderr from failed proof attempt if available
             if not proof_success and proof_stderr:
                 result["stderr"] = proof_stderr
-        if args.beq_plus and beq_result is not None:
-            result["beq_plus_attempted"] = True
-            result["beq_plus_left"] = beq_result.left_proved
-            result["beq_plus_right"] = beq_result.right_proved
-            result["beq_plus_strategy"] = beq_result.strategy
-            result["beq_plus_logs"] = beq_result.logs
+        if args.beq_plus:
+            if beq_result is not None:
+                result["beq_plus_attempted"] = True
+                result["beq_plus_left"] = beq_result.left_proved
+                result["beq_plus_right"] = beq_result.right_proved
+                result["beq_plus_strategy"] = beq_result.strategy
+                result["beq_plus_logs"] = beq_result.logs
+            else:
+                result["beq_plus_attempted"] = False
+                if beq_plus_skipped:
+                    result["beq_plus_skipped"] = True
         results.append(result)
         counts["rejected"] += 1
 
@@ -429,6 +441,8 @@ def main():
         "typecheck_timeout_seconds": args.typecheck_timeout,
         "s3_timeout_seconds": args.s3_timeout if args.s3_lite else None,
         "beq_plus_timeout_seconds": args.beq_plus_timeout if args.beq_plus else None,
+        "max_beq_plus_calls": args.max_beq_plus_calls if args.beq_plus else None,
+        "beq_plus_calls_used": beq_calls if args.beq_plus else None,
         "max_tactic_steps": args.max_tactic_steps
     }
     

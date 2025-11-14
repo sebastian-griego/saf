@@ -31,13 +31,12 @@ The strict PP mode replaces Python string normalization with Lean's native prett
 
 **S1 (implemented)** — current rules (kept very small and audited):
 
-- **Alpha-renaming**: Bound variables are renamed to canonical form (x₁, x₂, ...) to recognize α-equivalent propositions
-- `x ≠ y` ↔ `¬ (x = y)` (definitional: ≠ is notation for ¬ (=))
-- `a ≥ b` ↔ `b ≤ a` (canonicalize to `≤`, definitional: ≥ is notation for flipped ≤)
+- **α-renaming**: Canonicalizes bound variable names before and after rewrites.
+- **Definitional notation rewrites**: `x ≠ y` ↔ `¬ (x = y)` and `a ≥ b` ↔ `b ≤ a`.
+- **Classical logic rewrites**: double negation, De Morgan, quantifier negation (`¬∃`/`¬∀` pushdowns), and contrapositive (`P → Q` ↔ `¬Q → ¬P`), applied recursively.
+- **Structural canonization**: Flatten + sort `∧`/`∨` trees and merge same-type quantifiers, then re-run α-renaming.
 
-**S1 (future candidates)** — ideas for future consideration:
-
-- quantifier pushdown: `¬ ∃ x, P x` ↔ `∀ x, ¬ P x` (logical equivalence, not definitional)
+**S1 (future candidates)** — additions require kernel-level justification and new tests; currently no pending rules.
 
 **Reporting:** For each item we save status (`accepted`/`rejected`), tier (`S0`), and on rejection a `reason` and a
 **structured diff** (quantifiers, types, and operator skeleton). A summary includes counts and an error taxonomy.

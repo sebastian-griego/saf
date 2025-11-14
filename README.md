@@ -4,7 +4,7 @@
 faithfully expresses the **same mathematical proposition** as a canonical one — **without proving it**.
 
 - V0 implements **S0** (always on): type‑check + deterministic normalization + string equality.
-- **S1** (optional): semantic rewrites enabled with `--s1` flag (e.g., `x ≠ y` → `¬ (x = y)`, `a ≥ b` → `b ≤ a`).
+- **S1** (optional): audited semantic rewrites enabled with `--s1` (alpha-renaming, definitional `≠`/`≥` rewrites, double-negation + De Morgan/quantifier pushdown, contrapositive, and deterministic `∧`/`∨`/binder flattening).
 - **S3‑Lite** (optional): proof-based equivalence checking enabled with `--s3-lite` flag when S0/S1 normalization fails.
 - **BEq+** (optional, "heavy" tier): statement-equivalence metric using deterministic tactics, enabled with `--beq-plus` flag.
 
@@ -158,10 +158,12 @@ The toolchain is frozen to ensure reproducible results across different machines
 - PP options are documented in [PP_PROFILE.md](PP_PROFILE.md) and logged in reports
 
 **S1 Normalization** (optional, `--s1` flag):
-- Conservative, definitionally equivalent notation rewrites
-- Rules: `x ≠ y` → `¬ (x = y)`, `a ≥ b` → `b ≤ a`
+- α-renames binders before/after rewrites for deterministic scopes.
+- Definitional notation rewrites: `x ≠ y` → `¬ (x = y)` and `a ≥ b` → `b ≤ a`.
+- Classical logic rewrites applied recursively: double negation, De Morgan, quantifier negation, and contrapositive.
+- Structural canonization: flatten and sort `∧`/`∨` trees and combine like quantifiers (binder normalization).
 - **Test results**: 2/8 accepted in `data_challenge/` (correctly rejects non-equivalent forms)
-- See [bank/s1_rules.md](bank/s1_rules.md) for rule documentation
+- See [bank/s1_rules.md](bank/s1_rules.md) for the full audited rule bank and proofs
 - See [CAPABILITIES.md](CAPABILITIES.md) for detailed capabilities and limitations
 
 **S3‑Lite** (optional, `--s3-lite` flag):

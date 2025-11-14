@@ -34,21 +34,19 @@ S0 handles formatting and notation canonicalization:
 
 ## S1 Normalization (Optional, `--s1` flag)
 
-S1 applies **conservative, definitionally equivalent** notation rewrites:
+S1 applies **audited, deterministic** rewrites to both canonical and candidate propositions:
 
-1. **Not-Equals**: `x ≠ y` → `¬ (x = y)`
-   - Definitional: `≠` is notation for `¬ (=)` in Lean
-   
-2. **Greater-Equal**: `a ≥ b` → `b ≤ a`
-   - Definitional: `≥` is notation for flipped `≤` in Lean
+1. **α-renaming**: Canonicalizes bound variable names before and after rewrites so scopes are deterministic.
+2. **Definitional notation rewrites**: `x ≠ y` → `¬ (x = y)` and `a ≥ b` → `b ≤ a`.
+3. **Classical logic rewrites (recursive)**: double negation elimination, De Morgan, quantifier negation (`¬∃`/`¬∀` pushdowns), and contrapositive (`P → Q` ↦ `¬Q → ¬P`).
+4. **Structural canonization**: Flatten and lexicographically sort `∧`/`∨` trees and merge like quantifiers (binder normalization), then re-run α-renaming.
 
 **Not included** (by design):
-- `¬ ∃ → ∀ ¬` (logical equivalence, not definitional)
-- `a ≤ b ∧ b ≤ a ↔ a = b` (requires order structure)
-- Binder variations (handled in S0)
-- Comma/spacing (handled in S0)
+- Rewrites that require extra structure (e.g., `a ≤ b ∧ b ≤ a ↔ a = b` depends on antisymmetry)
+- Domain-specific or arithmetic facts beyond pure logic/notation
+- Binder/spacing tweaks already handled in S0
 
-See `bank/s1_rules.md` for detailed documentation.
+See `bank/s1_rules.md` for the full rule bank, justification, and tests.
 
 ## Test Results
 
@@ -75,7 +73,7 @@ See `bank/s1_rules.md` for detailed documentation.
 1. **Parentheses**: Extra parentheses around expressions are not normalized (e.g., `(a + b) = (b + a)` vs `a + b = b + a`)
 2. **Variable order**: Binder variable order matters (`∀ a b : T, P` vs `∀ b a : T, P`)
 3. **Alpha-equivalence**: Handled in S1 (bound variables are renamed to canonical form)
-4. **Semantic equivalences**: Only definitional equivalences and α-renaming are handled in S1
+4. **Semantic equivalences**: S1 only covers definitional + classical logic tautologies; structure-dependent rewrites remain out of scope
 
 ## S3-Lite (Optional, `--s3-lite` flag)
 
