@@ -1,0 +1,11 @@
+{
+  "id": "beq_test_1",
+  "domain": "prop",
+  "nl": "Test case 1: Conjunction commutativity - P and Q is equivalent to Q and P",
+  "lean": "∀ P Q : Prop, P ∧ Q",
+  "imports": [
+    "Mathlib"
+  ],
+  "candidate": "∀ P Q : Prop, Q ∧ P"
+}
+

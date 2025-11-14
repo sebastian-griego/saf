@@ -91,42 +91,23 @@ BEq+ is a statement-equivalence metric that proves each direction (P → Q and Q
 - **Reference**: "Reliable Evaluation and Benchmarks for Statement Autoformalization" (EMNLP 2025)
   - Paper: https://aclanthology.org/2025.emnlp-main.907.pdf
   - Code: https://github.com/augustepoiroux/LeanInteract
-- **Implementation Status**: ⚠️ **PLACEHOLDER** - Currently uses a simplified fallback implementation
-  - Attempts to use lean-interact package if available, but the API may not match
-  - Falls back to a simplified direct Lean implementation
-  - **TODO**: Align with the official BEq+ implementation from LeanInteract repository
-- **Current Fallback Tactics**: Deterministic bundle (rfl, assumption, simp_all) applied to both directions separately
-- **Timeout**: Default 30 seconds (configurable with `--beq-plus-timeout`)
-- **Dependencies**: Optional `lean-interact` package (install with `pip install lean-interact`)
+- **Implementation Status**: ✅ Uses the official LeanInteract BEq+ algorithm when the `lean-interact` package is installed (AutoLeanServer, Algorithm 1 from the paper). Falls back to a conservative Lean snippet otherwise.
+- **Fallback tactic bundle** (deterministic, immediate-fail):
+  - `exact h` (definitional equality), `assumption`
+  - `simp only [and_comm, or_comm, add_comm, mul_comm]` for light commutativity rewrites
+- **Timeout**: Default 30 seconds per BEq+ attempt (configurable with `--beq-plus-timeout`)
+- **Global budget**: `--max-beq-plus-calls` caps how many BEq+ invocations run in a harness pass (skip+log once exhausted)
+- **Dependencies**: `pip install lean-interact` to enable the official algorithm; fallback path requires only Lean/Lake
 - **Use case**: Catches equivalences missed by normalization and S3-Lite; suitable for research-level math evaluation
+- **Classical reasoning**: Shares the `--s3-classical` flag—when set, BEq+ opens `Classical` in both official and fallback modes
 - **Note**: BEq+ is distinct from Lean's `BEq` typeclass (boolean equality `==`); BEq+ is for mathematical equivalence
 
 ### BEq+ Implementation Details
 
-**Current Implementation (Placeholder)**:
-BEq+ works by:
-1. Proving the forward direction: `canonical → candidate`
-2. Proving the backward direction: `candidate → canonical`
-3. Combining both directions to show equivalence: `canonical ↔ candidate`
-
-The current fallback tactic bundle tries:
-- `rfl` (definitional equality)
-- `assumption` (use hypothesis)
-- `simp_all` (simplification - may be too permissive)
-
-**Official BEq+ (from paper)**:
-According to the paper, BEq+ is:
-- Deterministic
-- Runs efficiently on CPU (no 20B LLM prover required)
-- Proves both directions separately
-- Correlates strongly with human judgment
-- More sophisticated than the current fallback implementation
-
-**Next Steps**:
-1. Check the actual BEq+ implementation in https://github.com/augustepoiroux/LeanInteract
-2. Verify the correct API for calling BEq+ from Python
-3. Update the implementation to use the official BEq+ tactic bundle
-4. Ensure the implementation matches the paper's specifications
+**Current Implementation**:
+1. Prefer the LeanInteract BEq+ helper (Algorithm 1) via `lean_interact.AutoLeanServer`, mirroring the paper exactly.
+2. If LeanInteract is unavailable or fails, fall back to the local deterministic snippet that attempts each direction separately using the conservative bundle above.
+3. Each invocation records success/failure, direction info, strategy, timing, and logs for auditability.
 
 ## Usage
 
@@ -143,11 +124,14 @@ python harness/check_s0.py --data data --project harness/lean_project --s3-lite
 # BEq+ enabled (heavy tier)
 python harness/check_s0.py --data data --project harness/lean_project --beq-plus
 
-# Combined: S1 + S3-Lite + BEq+
-python harness/check_s0.py --data data --project harness/lean_project --s1 --s3-lite --beq-plus
+# Combined: S1 + S3-Lite + BEq+ (with 60s BEq+ timeout, cap at 200 calls)
+python harness/check_s0.py --data data --project harness/lean_project \
+  --s1 --s3-lite --beq-plus \
+  --beq-plus-timeout 60 \
+  --max-beq-plus-calls 200
 
-# Custom output and timeouts
-python harness/check_s0.py --data data --project harness/lean_project --out reports/custom.json --beq-plus-timeout 60
+# Custom output
+python harness/check_s0.py --data data --project harness/lean_project --out reports/custom.json
 ```
 
 ## Files
