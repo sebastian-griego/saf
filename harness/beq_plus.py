@@ -10,19 +10,19 @@ import subprocess
 from typing import Tuple, Dict, Any, Optional
 
 
-# --- Try LeanInteract (official) first ---------------------------------------
+# --- LeanInteract availability ------------------------------------------------
 _LI_OK = False
-_LI_BEQ_PLUS = None
 try:
     from lean_interact import LeanREPLConfig, LeanServer, Command, LocalProject  # type: ignore
 except Exception:
     _LI_OK = False
 else:
     _LI_OK = True
-    try:
-        from li_beq_plus_impl import beq_plus as _LI_BEQ_PLUS  # type: ignore
-    except Exception:
-        _LI_BEQ_PLUS = None
+
+try:
+    from li_beq_plus_wrapper import run_beq_plus as _RUN_BEQ_PLUS  # type: ignore
+except Exception:
+    _RUN_BEQ_PLUS = None
 
 
 @dataclass
@@ -32,12 +32,6 @@ class BeqPlusResult:
     right_proved: bool
     strategy: str        # "lean-interact" or "fallback"
     logs: Dict[str, Any] # raw info to include in reports for debugging
-
-
-def _prop_as_theorem(name: str, proposition: str) -> str:
-    """Wrap a raw proposition as a Lean theorem declaration (statement only)."""
-    prop_body = proposition.strip()
-    return f"theorem {name} : {prop_body} := by sorry"
 
 
 def _build_src_header(imports: str, classical: bool) -> str:
@@ -220,25 +214,22 @@ def beq_plus_equiv(
     # Resolve project_dir to absolute path early
     project_dir = Path(project_dir).resolve()
     
+    header = _build_src_header(imports, classical)
     lean_code = _mk_lean_file(imports, canonical, candidate, classical)
     force_fallback = os.environ.get("BEQ_FORCE_FALLBACK", "").lower() in {"1", "true", "yes"}
     li_errors: list[str] = []
+    timeout_budget = timeout_s if timeout_s is not None else 30
 
     # Preferred: delegate to LeanInteract's official BEq+ implementation.
-    if _LI_OK and _LI_BEQ_PLUS is not None and not force_fallback:
+    if _RUN_BEQ_PLUS is not None and not force_fallback:
         try:
-            cfg = LeanREPLConfig(project=LocalProject(directory=str(project_dir)), verbose=False)  # type: ignore
-            header = _build_src_header(imports, classical)
-            canonical_thm = _prop_as_theorem("_beq_canonical", canonical)
-            candidate_thm = _prop_as_theorem("_beq_candidate", candidate)
-            timeout_budget = timeout_s if timeout_s is not None else 30
             start = time.time()
-            ok = _LI_BEQ_PLUS(
-                canonical_thm,
-                candidate_thm,
+            ok = _RUN_BEQ_PLUS(
+                project_dir,
+                canonical,
+                candidate,
                 header,
-                cfg,
-                timeout_budget,
+                timeout_seconds=timeout_budget,
                 verbose=False,
             )
             elapsed = time.time() - start
@@ -246,13 +237,13 @@ def beq_plus_equiv(
                 "elapsed_s": elapsed,
                 "timeout_s": timeout_budget,
                 "header": header,
-                "mode": "lean-interact-official",
+                "mode": "leaninteract-beq-plus",
             }
             return BeqPlusResult(
                 success=ok,
                 left_proved=ok,
                 right_proved=ok,
-                strategy="lean-interact-official",
+                strategy="leaninteract-beq-plus",
                 logs=logs,
             )
         except Exception as exc:  # pragma: no cover - defensive
