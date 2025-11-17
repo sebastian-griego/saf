@@ -12,6 +12,7 @@ ENV/
 # Lean / Lake
 harness/lean_project/.lake/
 harness/lean_project/build/
+harness/.lean_interact_cache/
 *.olean
 *.c
 Check.lean

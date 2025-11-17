@@ -20,9 +20,13 @@ else:
     _LI_OK = True
 
 try:
-    from li_beq_plus_wrapper import run_beq_plus as _RUN_BEQ_PLUS  # type: ignore
+    from li_beq_plus_wrapper import (  # type: ignore
+        run_beq_plus as _RUN_BEQ_PLUS,
+        make_lean_project_config as _MAKE_LI_CONFIG,
+    )
 except Exception:
     _RUN_BEQ_PLUS = None
+    _MAKE_LI_CONFIG = None
 
 
 @dataclass
@@ -92,7 +96,10 @@ def _run_li(project_dir: Path, lean_code: str, timeout_s: int | None) -> Tuple[b
     Run the Lean snippet with LeanInteract, checking whether both
     `_dir` (forward) and `_dir2` (backward) theorems elaborate (i.e., 'Goals accomplished!').
     """
-    cfg = LeanREPLConfig(project=LocalProject(directory=str(project_dir)), verbose=False)  # type: ignore
+    if _MAKE_LI_CONFIG is not None:
+        cfg = _MAKE_LI_CONFIG(project_dir, timeout_seconds=timeout_s)
+    else:
+        cfg = LeanREPLConfig(project=LocalProject(directory=str(project_dir)), verbose=False)  # type: ignore
     server = LeanServer(cfg)  # type: ignore
 
     start = time.time()

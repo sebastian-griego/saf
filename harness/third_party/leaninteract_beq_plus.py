@@ -76,7 +76,7 @@ except ImportError:  # pragma: no cover - best-effort fallback
     def tqdm(iterable, **_kwargs):  # type: ignore
         return iterable
 
-from lean_interact import AutoLeanServer, Command, LeanREPLConfig
+from lean_interact import Command, LeanREPLConfig, LeanServer
 from lean_interact.interface import (
     CommandResponse,
     LeanError,
@@ -107,9 +107,9 @@ def extract_exact_proof(lean_output: CommandResponse, proof_start_line: int | No
 
 
 def check_proof_sub(
-    server: AutoLeanServer,
+    server: LeanServer,
+    prefix_code: str,
     formal_code: str,
-    context_env: int,
     formal_2_start_line: int,
     proof: str,
     timeout: int,
@@ -119,9 +119,9 @@ def check_proof_sub(
     Runs Lean code appended with a given proof and checks its validity.
 
     Args:
-        server: Instance of AutoLeanServer.
+        server: Instance of LeanServer.
+        prefix_code: Source header (imports, opens, etc.) to prepend.
         formal_code: Concatenated Lean formalizations.
-        context_env: Execution environment from the Lean server.
         formal_2_start_line: Starting line number of the second formalization.
         proof: Proof tactic string to run.
         timeout: Timeout in seconds for the Lean server execution.
@@ -134,8 +134,7 @@ def check_proof_sub(
     try:
         lean_output = server.run(
             Command(
-                cmd=formal_code + indent_code(prepended + proof, indent_level),
-                env=context_env,
+                cmd=prefix_code + formal_code + indent_code(prepended + proof, indent_level),
             ),
             timeout=timeout,
         )
@@ -178,10 +177,11 @@ def beql(
     Returns:
         True if both directions of the equivalence hold; False otherwise.
     """
-    server = AutoLeanServer(config=repl_config)
-    context_run = server.run(Command(cmd=src_header), add_to_session_cache=True)
-    assert isinstance(context_run, CommandResponse)
-    context_env = context_run.env
+    server = LeanServer(config=repl_config)
+    header_block = src_header.strip()
+    if header_block:
+        header_block = f"{header_block}\n\n"
+    header_line_offset = header_block.count("\n")
 
     base_thm_name = "base_theorem"
     reformulated_thm_name = "reformulated_theorem"
@@ -194,7 +194,7 @@ def beql(
             console.print(f"=====\nChecking {'1 -> 2' if i == 0 else '2 -> 1'}")
         try:
             formal_1_code = clean_last_theorem_string(base_thm, base_thm_name, add_sorry=True) + "\n\n"
-            formal_2_start_line = formal_1_code.count("\n") + 1
+            formal_2_start_line = header_line_offset + formal_1_code.count("\n") + 1
             formal_2_code = f"{clean_last_theorem_string(reform_thm, reformulated_thm_name, add_sorry=False)} := by"
         except ValueError:
             if verbose:
@@ -203,13 +203,13 @@ def beql(
 
         formal_code = formal_1_code + formal_2_code
         # Preliminary check to ensure the formalization is well-typed.
-        if check_proof_sub(server, formal_code, context_env, formal_2_start_line, "sorry", timeout_per_proof) is None:
+        if check_proof_sub(server, header_block, formal_code, formal_2_start_line, "sorry", timeout_per_proof) is None:
             if verbose:
                 console.print("Ill-typed formalization encountered, skipping this pair.")
             break
 
         proof_exact = check_proof_sub(
-            server, formal_code, context_env, formal_2_start_line, "exact?", timeout_per_proof
+            server, header_block, formal_code, formal_2_start_line, "exact?", timeout_per_proof
         )
         if proof_exact and base_thm_name in proof_exact:
             res[i] = True
@@ -243,10 +243,11 @@ def beq_plus(
     Returns:
         True if both directions of the equivalence hold; False otherwise.
     """
-    server = AutoLeanServer(config=repl_config)
-    context_run = server.run(Command(cmd=src_header), add_to_session_cache=True)
-    assert isinstance(context_run, CommandResponse)
-    context_env = context_run.env
+    server = LeanServer(config=repl_config)
+    header_block = src_header.strip()
+    if header_block:
+        header_block = f"{header_block}\n\n"
+    header_line_offset = header_block.count("\n")
 
     base_thm_name = "base_theorem"
     reformulated_thm_name = "reformulated_theorem"
@@ -269,7 +270,7 @@ def beq_plus(
             console.print(f"=====\nChecking {'1 -> 2' if i == 0 else '2 -> 1'}")
         try:
             formal_1_code = clean_last_theorem_string(base_thm, base_thm_name, add_sorry=True) + "\n\n"
-            formal_2_start_line = formal_1_code.count("\n") + 1
+            formal_2_start_line = header_line_offset + formal_1_code.count("\n") + 1
             formal_2_code = f"{clean_last_theorem_string(reform_thm, reformulated_thm_name, add_sorry=False)} := by"
         except ValueError:
             if verbose:
@@ -277,14 +278,14 @@ def beq_plus(
             break
 
         formal_code = formal_1_code + formal_2_code
-        if check_proof_sub(server, formal_code, context_env, formal_2_start_line, "sorry", timeout_per_proof) is None:
+        if check_proof_sub(server, header_block, formal_code, formal_2_start_line, "sorry", timeout_per_proof) is None:
             if verbose:
                 console.print("Ill-typed formalization encountered, skipping this pair.")
             break
 
         # 1. Use BEqL
         proof_exact = check_proof_sub(
-            server, formal_code, context_env, formal_2_start_line, "exact?", timeout_per_proof
+            server, header_block, formal_code, formal_2_start_line, "exact?", timeout_per_proof
         )
         if proof_exact and base_thm_name in proof_exact:
             res[i] = True
@@ -296,8 +297,8 @@ def beq_plus(
         # 2. try to apply the base theorem directly
         proof_apply = check_proof_sub(
             server,
+            header_block,
             formal_code,
-            context_env,
             formal_2_start_line,
             f"apply {base_thm_name}\n" + proof_all_apply,
             timeout_per_proof,
@@ -316,7 +317,8 @@ def beq_plus(
         provable_without_have = False
         try:
             res_without_have = server.run(
-                Command(cmd=formal_code + proof_all_have, env=context_env), timeout=timeout_per_proof
+                Command(cmd=header_block + formal_code + proof_all_have),
+                timeout=timeout_per_proof,
             )
             if isinstance(res_without_have, CommandResponse):
                 provable_without_have = res_without_have.lean_code_is_valid(allow_sorry=False)
@@ -337,8 +339,8 @@ def beq_plus(
                 )
                 proof_have = check_proof_sub(
                     server,
+                    header_block,
                     formal_code,
-                    context_env,
                     formal_2_start_line,
                     have_stmt_proof + proof_all_have,
                     timeout_per_proof,
@@ -354,8 +356,8 @@ def beq_plus(
         for max_step in range(0, 5):
             proof_convert = check_proof_sub(
                 server,
+                header_block,
                 formal_code,
-                context_env,
                 formal_2_start_line,
                 f"convert (config := .unfoldSameFun) {base_thm_name} using {max_step}\n" + proof_all_apply,
                 timeout_per_proof,

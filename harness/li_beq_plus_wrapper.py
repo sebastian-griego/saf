@@ -46,6 +46,8 @@ def make_lean_project_config(project_dir: Path, timeout_seconds: Optional[int] =
     config = LeanREPLConfig(  # type: ignore[arg-type]
         project=project,
         cache_dir=str(CACHE_DIR.resolve()),
+        enable_incremental_optimization=False,
+        enable_parallel_elaboration=False,
         verbose=False,
     )
     if timeout_seconds is not None and hasattr(config, "timeout"):
