@@ -47,6 +47,16 @@ def _build_src_header(imports: str, classical: bool) -> str:
     return header.strip()
 
 
+def _generate_theorem(name: str, hyp: str, concl: str) -> str:
+    return f"""    theorem {name} : ({hyp}) -> ({concl}) := by
+      intro h
+      first
+        | exact h
+        | assumption
+        | simp only [and_comm, or_comm, add_comm, mul_comm]; try assumption
+    """
+
+
 def _mk_lean_file(imports: str, p: str, q: str, classical: bool) -> str:
     """
     Generate a Lean snippet that tries to prove P->Q and Q->P using a
@@ -59,36 +69,23 @@ def _mk_lean_file(imports: str, p: str, q: str, classical: bool) -> str:
     # Paper references: Algorithm 1 + A.1.  (Poiroux et al. 2024/2025)
     header = []
     header.append(imports.strip() or "import Mathlib")
-    
+
     # Add tactic imports if not already present
     imports_lower = imports.lower()
     if "tauto" not in imports_lower and classical:
         header.append("import Mathlib.Tactic.Tauto")
     if "itauto" not in imports_lower:
         header.append("import Mathlib.Tactic.ITauto")
-    
+
     header.append("set_option autoImplicit true")
     if classical:
         header.append("open Classical")
-    header.append("-- BEq+ (conservative fallback) — deterministic tactics only")
+    header.append("-- BEq+ (conservative fallback)")
 
-    # One directed attempt: prove P -> Q
-    # CRITICAL: Use ONLY fast tactics that fail immediately - NO tauto, NO simp_all
-    # These can hang on quantified formulas and waste time
-    attempt_dir = f"""    -- Try to show: ({p}) -> ({q})
-    theorem _dir : ({p}) -> ({q}) := by
-      intro h
-      -- Use ONLY fast, immediate-fail tactics
-      first
-        | exact h  -- If definitionally equal (instant)
-        | assumption  -- If hypothesis matches (instant)
-        | (simp only [and_comm, or_comm, add_comm, mul_comm]; assumption)  -- Commutativity lemmas only (fast)
-    """
+    dir1 = _generate_theorem("_dir", p, q)
+    dir2 = _generate_theorem("_dir2", q, p)
 
-    # Symmetric attempt: swap p and q.
-    attempt_dir_sym = attempt_dir.replace("_P", "_P2").replace("_Q", "_Q2").replace("_dir", "_dir2").replace(p, "__P_PLACEHOLDER__").replace(q, "__Q_PLACEHOLDER__")
-    attempt_dir_sym = attempt_dir_sym.replace("__P_PLACEHOLDER__", q).replace("__Q_PLACEHOLDER__", p)
-    return "\n".join(header) + "\n" + attempt_dir + "\n" + attempt_dir_sym + "\n"
+    return "\n".join(header) + "\n" + dir1 + "\n" + dir2 + "\n"
 
 
 def _run_li(project_dir: Path, lean_code: str, timeout_s: int | None) -> Tuple[bool, bool, Dict[str, Any]]:

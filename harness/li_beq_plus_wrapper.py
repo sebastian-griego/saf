@@ -6,6 +6,7 @@ so the rest of the SAF harness can just call `run_beq_plus`.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -24,7 +25,8 @@ except Exception:  # pragma: no cover - module search path might not include har
     except Exception:
         li_beq = None  # type: ignore
 
-CACHE_DIR = Path(__file__).parent / ".lean_interact_cache"
+# Keep the cache near the drive root on Windows to avoid MAX_PATH issues
+CACHE_DIR = Path("C:/Temp/li_cache") if os.name == "nt" else Path(__file__).parent / ".lean_interact_cache"
 CACHE_DIR.mkdir(exist_ok=True, parents=True)
 
 
