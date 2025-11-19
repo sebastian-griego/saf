@@ -9,7 +9,7 @@ from ensure_built import ensure_project_built, load_lake_environment
 
 def run_lean_typecheck(
     project_dir: Path,
-    imports: list[str],
+    imports: list[str] | str,
     candidate: str,
     timeout: int = None,
     lean_env: dict[str, str] | None = None,
@@ -23,10 +23,13 @@ def run_lean_typecheck(
     import_map = {
         "Mathlib.Algebra.Divisibility": "Mathlib.Algebra.Divisibility.Basic"
     }
-    for imp in imports:
-        normalized_imp = imp.replace("/", ".")
-        normalized_imp = import_map.get(normalized_imp, normalized_imp)
-        lines.append(f"import {normalized_imp}")
+    if isinstance(imports, str):
+        lines.append(imports)
+    else:
+        for imp in imports:
+            normalized_imp = imp.replace("/", ".")
+            normalized_imp = import_map.get(normalized_imp, normalized_imp)
+            lines.append(f"import {normalized_imp}")
     lines.append("")
     lines.append("def _candidate : Prop :=")
     lines.append(f"  {candidate}")
@@ -62,7 +65,7 @@ def run_lean_typecheck(
 
 def run_lean_equiv_proof(
     project_dir: Path,
-    imports: list[str],
+    imports: list[str] | str,
     canonical: str,
     candidate: str,
     timeout: int = 5,
@@ -97,17 +100,31 @@ def run_lean_equiv_proof(
     import_map = {
         "Mathlib.Algebra.Divisibility": "Mathlib.Algebra.Divisibility.Basic"
     }
-    for imp in imports:
-        normalized_imp = imp.replace("/", ".")
-        normalized_imp = import_map.get(normalized_imp, normalized_imp)
-        lines.append(f"import {normalized_imp}")
+    normalized_imports: list[str] = []
+    if isinstance(imports, str):
+        lines.append(imports)
+        for raw_line in imports.splitlines():
+            stripped = raw_line.strip()
+            if not stripped.startswith("import "):
+                continue
+            module_block = stripped[len("import ") :].strip()
+            if not module_block:
+                continue
+            for module in module_block.split():
+                if module.startswith("--"):
+                    break
+                module = module.replace("/", ".")
+                module = import_map.get(module, module)
+                normalized_imports.append(module)
+    else:
+        for imp in imports:
+            normalized_imp = imp.replace("/", ".")
+            normalized_imp = import_map.get(normalized_imp, normalized_imp)
+            lines.append(f"import {normalized_imp}")
+            normalized_imports.append(normalized_imp)
     
     # Add imports for logic tactics if using S3-Lite
     if s3_lite:
-        # Normalize imports for comparison
-        normalized_imports = [imp.replace("/", ".") for imp in imports]
-        normalized_imports = [import_map.get(imp, imp) for imp in normalized_imports]
-        
         # Ensure we have the logic tactics available
         # These might already be imported via Mathlib, but we make sure
         if "Mathlib.Tactic.ITauto" not in normalized_imports:
@@ -369,12 +386,15 @@ def main():
                 import_map = {
                     "Mathlib.Algebra.Divisibility": "Mathlib.Algebra.Divisibility.Basic"
                 }
-                import_lines = []
-                for imp in imports:
-                    normalized_imp = imp.replace("/", ".")
-                    normalized_imp = import_map.get(normalized_imp, normalized_imp)
-                    import_lines.append(f"import {normalized_imp}")
-                imports_str = "\n".join(import_lines) if import_lines else "import Mathlib"
+                if isinstance(imports, str):
+                    imports_str = imports if imports.strip() else "import Mathlib"
+                else:
+                    import_lines = []
+                    for imp in imports:
+                        normalized_imp = imp.replace("/", ".")
+                        normalized_imp = import_map.get(normalized_imp, normalized_imp)
+                        import_lines.append(f"import {normalized_imp}")
+                    imports_str = "\n".join(import_lines) if import_lines else "import Mathlib"
                 
                 beq_result = beq_plus_equiv(
                     project_dir=project_dir,
