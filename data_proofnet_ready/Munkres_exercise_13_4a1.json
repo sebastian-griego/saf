@@ -1,0 +1,8 @@
+{
+  "id": "Munkres|exercise_13_4a1",
+  "domain": "proofnet",
+  "nl": "If $\\mathcal{T}_\\alpha$ is a family of topologies on $X$, show that $\\bigcap \\mathcal{T}_\\alpha$ is a topology on $X$.",
+  "lean": "∀ (X I : Type*) (T : I → Set (Set X)) (h : ∀ i, is_topology X (T i)) :\n  is_topology X (⋂ i, I, T i)",
+  "candidate": "∀ (t : ι → Topology X), IsTopology (⨅ i, t i)",
+  "imports": "import Mathlib\n\nopen Filter Set TopologicalSpace\nopen scoped Topology\n\n\n\ndef is_topology (X : Type*) (T : Set (Set X)) :=\n  univ ∈ T ∧\n  (∀ s t, s ∈ T → t ∈ T → s ∩ t ∈ T) ∧\n  (∀s, (∀t ∈ s, t ∈ T) → sUnion s ∈ T)"
+}

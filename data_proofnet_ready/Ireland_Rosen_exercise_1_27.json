@@ -1,0 +1,8 @@
+{
+  "id": "Ireland-Rosen|exercise_1_27",
+  "domain": "proofnet",
+  "nl": "For all odd $n$ show that $8 \\mid n^{2}-1$.",
+  "lean": "∀ {n : ℕ} (hn : Odd n), 8 ∣ (n^2 - 1)",
+  "candidate": "∀ {n : ℕ} (hn : Odd n), 8 ∣ n^2 - 1",
+  "imports": "import Mathlib\n\nopen Real\nopen scoped BigOperators\n\n\n\n"
+}

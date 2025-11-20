@@ -1,0 +1,8 @@
+{
+  "id": "Ireland-Rosen|exercise_1_31",
+  "domain": "proofnet",
+  "nl": "Show that 2 is divisible by $(1+i)^{2}$ in $\\mathbb{Z}[i]$.",
+  "lean": "∀ : (⟨1, 1⟩, GaussianInt) ^ 2 ∣ 2",
+  "candidate": "2 ∣ (1+i)^2",
+  "imports": "import Mathlib\n\nopen Real\nopen scoped BigOperators\n\n\n\n"
+}

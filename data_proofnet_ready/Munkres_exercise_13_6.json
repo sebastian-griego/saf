@@ -1,0 +1,8 @@
+{
+  "id": "Munkres|exercise_13_6",
+  "domain": "proofnet",
+  "nl": "Show that the lower limit topology $\\mathbb{R}_l$ and $K$-topology $\\mathbb{R}_K$ are not comparable.",
+  "lean": "¬ (∀ U, Rl.IsOpen U → K_topology.IsOpen U) ∧ ¬ (∀ U, K_topology.IsOpen U → Rl.IsOpen U)",
+  "candidate": "∀ (K : ℝ), ℝ_l ≠ ℝ_K",
+  "imports": "import Mathlib\n\nopen Filter Set TopologicalSpace\nopen scoped Topology\n\n\n\ndef lower_limit_topology (X : Type) [Preorder X] :=\n  generateFrom {S : Set X | ∃ a b, a < b ∧ S = Ico a b}\n\ndef Rl := lower_limit_topology ℝ\n\ndef K : Set ℝ := {r | ∃ n : ℕ, r = 1 / n}\n\ndef K_topology := generateFrom\n  ({S : Set ℝ | ∃ a b, a < b ∧ S = Ioo a b} ∪ {S : Set ℝ | ∃ a b, a < b ∧ S = Ioo a b \\ K})"
+}

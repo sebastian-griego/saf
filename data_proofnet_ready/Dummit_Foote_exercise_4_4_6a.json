@@ -1,0 +1,8 @@
+{
+  "id": "Dummit-Foote|exercise_4_4_6a",
+  "domain": "proofnet",
+  "nl": "Prove that characteristic subgroups are normal.",
+  "lean": "∀ {G : Type*} [Group G] (H : Subgroup G)\n  [Characteristic H], Normal H",
+  "candidate": "∀ {G : Type*} [Group G] (H : Subgroup G), Characteristic H → Normal H",
+  "imports": "import Mathlib\n\nopen Fintype Subgroup Set Polynomial Ideal\nopen scoped BigOperators\n\n\n\n"
+}

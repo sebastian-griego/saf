@@ -1,0 +1,8 @@
+{
+  "id": "Shakarchi|exercise_1_26",
+  "domain": "proofnet",
+  "nl": "Suppose $f$ is continuous in a region $\\Omega$. Prove that any two primitives of $f$ (if they exist) differ by a constant.",
+  "lean": "∀ (f F₁ F₂ : ℂ → ℂ) (Ω : Set ℂ) (h0 : Nonempty Ω) (h1 : IsOpen Ω) (h2 : IsConnected Ω) (hf : ContinuousOn f Ω)\n  (hF₁ : DifferentiableOn ℂ F₁ Ω) (hF₂ : DifferentiableOn ℂ F₂ Ω)\n  (hdF₁ : ∀ x ∈ Ω, deriv F₁ x = f x) (hdF₂ : ∀ x ∈ Ω, deriv F₂ x = f x)\n  : ∃ c, ℂ, ∀ x, F₁ x = F₂ x + c",
+  "candidate": "∀ (h : ContinuousOn f Ω), ∀ p₁ p₂, HasPrimitive f p₁ → HasPrimitive f p₂ → ∃ c, p₁ - c = p₂",
+  "imports": "import Mathlib\n\nopen Complex Filter Function Metric Finset\nopen scoped BigOperators Topology\n\n\n\n"
+}

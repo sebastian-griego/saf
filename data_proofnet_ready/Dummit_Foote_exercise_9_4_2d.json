@@ -1,0 +1,8 @@
+{
+  "id": "Dummit-Foote|exercise_9_4_2d",
+  "domain": "proofnet",
+  "nl": "Prove that $\\frac{(x+2)^p-2^p}{x}$, where $p$ is an odd prime, is irreducible in $\\mathbb{Z}[x]$.",
+  "lean": "∀ {p : ℕ} (hp : p.Prime ∧ p > 2)\n  {f : Polynomial ℤ} (hf : f = (X + 2)^p):\n  Irreducible (∑ n in (f.support \\ {0}), (f.coeff n : Polynomial ℤ) * X ^ (n-1), Polynomial ℤ)",
+  "candidate": "∀ {p : ℕ} (hp : Nat.Prime p) (f : Polynomial ℤ) : f = Polynomial.C (2 : ℤ) ^ p - 2 ^ p → ∀ (g, Polynomial ℤ), g ∣ f → g = Polynomial.C 1 ∨ g = f",
+  "imports": "import Mathlib\n\nopen Fintype Subgroup Set Polynomial Ideal\nopen scoped BigOperators\n\n\n\n"
+}

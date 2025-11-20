@@ -1,0 +1,8 @@
+{
+  "id": "Dummit-Foote|exercise_4_5_16",
+  "domain": "proofnet",
+  "nl": "Let $|G|=p q r$, where $p, q$ and $r$ are primes with $p<q<r$. Prove that $G$ has a normal Sylow subgroup for either $p, q$ or $r$.",
+  "lean": "∀ {p q r : ℕ} {G : Type*} [Group G]\n  [Fintype G]  (hpqr : p < q ∧ q < r)\n  (hpqr1 : p.Prime ∧ q.Prime ∧ r.Prime)(hG : card G = p*q*r) :\n  (∃ (P : Sylow p G), P.Normal) ∨ (∃ (P : Sylow q G), P.Normal) ∨ (∃ (P, Sylow r G), P.Normal)",
+  "candidate": "∀ (G : Type*) [Group G] (hG : Fintype G) (p q r : ℕ) (hp : Nat.Prime p) (hq : Nat.Prime q) (hr : Nat.Prime r) (hG_card : Fintype.card G = p * q * r) (h : p + q < r), Fintype.card G = p * q * (r - (p + q)) + p * q",
+  "imports": "import Mathlib\n\nopen Fintype Subgroup Set Polynomial Ideal\nopen scoped BigOperators\n\n\n\n"
+}

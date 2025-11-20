@@ -1,0 +1,8 @@
+{
+  "id": "Putnam|exercise_1998_a3",
+  "domain": "proofnet",
+  "nl": "Let $f$ be a real function on the real line with continuous third derivative. Prove that there exists a point $a$ such that\n$f(a) \\cdot f^{\\prime}(a) \\cdot f^{\\prime \\prime}(a) \\cdot f^{\\prime \\prime \\prime}(a) \\geq 0$.",
+  "lean": "∀ (f : ℝ → ℝ) (hf : ContDiff ℝ 3 f) :\n  ∃ a, ℝ, (f a) * (deriv f a) * (iteratedDeriv 2 f a) * (iteratedDeriv 3 f a) ≥ 0",
+  "candidate": "∀ {f : ℝ → ℝ} (h : Continuous (deriv^[3] f)), ∃ a, deriv^[3] f a = 0",
+  "imports": "import Mathlib\n\nopen scoped BigOperators\n\n\n\n"
+}

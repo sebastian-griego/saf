@@ -1,0 +1,8 @@
+{
+  "id": "Herstein|exercise_2_1_27",
+  "domain": "proofnet",
+  "nl": "If $G$ is a finite group, prove that there is an integer $m > 0$ such that $a^m = e$ for all $a \\in G$.",
+  "lean": "∀ {G : Type*} [Group G]\n  [Fintype G] : ∃ (m : ℕ), m > 0 ∧ ∀ (a, G), a ^ m = 1",
+  "candidate": "∀ {G : Type*} [Group G] [Finite G] : ∃ m : ℕ, 0 < m ∧ ∀ g, G, g ^ m = 1",
+  "imports": "import Mathlib\n\nopen Fintype Set Real Ideal Polynomial\nopen scoped BigOperators\n\n\n\n"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "Artin|exercise_2_11_3",
+  "domain": "proofnet",
+  "nl": "Prove that a group of even order contains an element of order $2 .$",
+  "lean": "∀ {G : Type*} [Group G] [Fintype G]\n  (hG : Even (card G)) : ∃ x, G, orderOf x = 2",
+  "candidate": "∀ [Fintype G] [DecidableEq G] [Group G] (h : Fintype.card G % 2 = 0) : ∃ g, G, orderOf g = 2",
+  "imports": "import Mathlib\n\nopen Function Fintype Subgroup Ideal Polynomial Submodule Zsqrtd\nopen scoped BigOperators\n\n\n\n"
+}

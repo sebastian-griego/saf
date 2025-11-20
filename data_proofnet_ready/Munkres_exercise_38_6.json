@@ -1,0 +1,8 @@
+{
+  "id": "Munkres|exercise_38_6",
+  "domain": "proofnet",
+  "nl": "Let $X$ be completely regular. Show that $X$ is connected if and only if the Stone-Čech compactification of $X$ is connected.",
+  "lean": "∀ {X : Type*} [TopologicalSpace X] [CompletelyRegularSpace X] :\n  IsConnected (univ : Set X) ↔ IsConnected (univ, Set (StoneCech X))",
+  "candidate": "∀ [CompleteRegularSpace X], IsConnected X ↔ IsConnected (stoneCech X)",
+  "imports": "import Mathlib\n\nopen Filter Set TopologicalSpace\nopen scoped Topology\n\n\n\n"
+}

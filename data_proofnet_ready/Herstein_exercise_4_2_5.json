@@ -1,0 +1,8 @@
+{
+  "id": "Herstein|exercise_4_2_5",
+  "domain": "proofnet",
+  "nl": "Let $R$ be a ring in which $x^3 = x$ for every $x \\in R$. Prove that $R$ is commutative.",
+  "lean": "∀ {R : Type*} [Ring R]\n  (h : ∀ x : R, x ^ 3 = x), Nonempty (CommRing R)",
+  "candidate": "∀ (R) [Ring R] [∀ x : R, x ^ 3 = x], IsCommutative R (· * ·)",
+  "imports": "import Mathlib\n\nopen Fintype Set Real Ideal Polynomial\nopen scoped BigOperators\n\n\n\n"
+}

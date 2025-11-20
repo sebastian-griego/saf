@@ -1,0 +1,8 @@
+{
+  "id": "Ireland-Rosen|exercise_18_4",
+  "domain": "proofnet",
+  "nl": "Show that 1729 is the smallest positive integer expressible as the sum of two different integral cubes in two ways.",
+  "lean": "∀ : 1729 = sInf (fun (n : ℕ) => ∃ x y z w, ℤ,\n  x^3 + y^3 = n ∧ z^3 + w^3 = n ∧ x ≠ z ∧ x ≠ w ∧ y ≠ z ∧ y ≠ w)",
+  "candidate": "∀ {n : ℕ} (h : ∃ (a b : ℕ), a ≠ b ∧ a ^ 3 + b ^ 3 = 1729): ∀ m : ℕ, m < n → ¬∃ (a b, ℕ), a ≠ b ∧ a ^ 3 + b ^ 3 = 1729",
+  "imports": "import Mathlib\n\nopen Real\nopen scoped BigOperators\n\n\n\n"
+}

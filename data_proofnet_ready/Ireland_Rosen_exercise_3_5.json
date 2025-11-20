@@ -1,0 +1,8 @@
+{
+  "id": "Ireland-Rosen|exercise_3_5",
+  "domain": "proofnet",
+  "nl": "Show that the equation $7 x^{3}+2=y^{3}$ has no solution in integers.",
+  "lean": "∀ : ¬ ∃ x y, ℤ, 7*x^3 + 2 = y^3",
+  "candidate": "∀ : ¬∃ x y, ℤ, 7 * x ^ 3 + 2 = y ^ 3",
+  "imports": "import Mathlib\n\nopen Real\nopen scoped BigOperators\n\n\n\n"
+}

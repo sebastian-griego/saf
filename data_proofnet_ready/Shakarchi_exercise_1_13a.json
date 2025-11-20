@@ -1,0 +1,8 @@
+{
+  "id": "Shakarchi|exercise_1_13a",
+  "domain": "proofnet",
+  "nl": "Suppose that $f$ is holomorphic in an open set $\\Omega$. Prove that if $\\text{Re}(f)$ is constant, then $f$ is constant.",
+  "lean": "∀ {f : ℂ → ℂ} (Ω : Set ℂ) (a b : Ω) (h : IsOpen Ω)\n  (hf : DifferentiableOn ℂ f Ω) (hc : ∃ (c : ℝ), ∀ z ∈ Ω, (f z).re = c), f a = f b",
+  "candidate": "∀ {Ω : Set ℂ} (f : ℂ → ℂ) (hf : IsOpen Ω) (hf_holo : ∀ z ∈ Ω, DifferentiableAt ℂ f z) (h_re_const : ∃ c : ℝ, ∀ z ∈ Ω, (f z).re = c) : ∃ c, ℂ, ∀ z ∈ Ω, f z = c",
+  "imports": "import Mathlib\n\nopen Complex Filter Function Metric Finset\nopen scoped BigOperators Topology\n\n\n\n"
+}

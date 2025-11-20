@@ -1,0 +1,8 @@
+{
+  "id": "Herstein|exercise_4_3_25",
+  "domain": "proofnet",
+  "nl": "Let $R$ be the ring of $2 \\times 2$ matrices over the real numbers; suppose that $I$ is an ideal of $R$. Show that $I = (0)$ or $I = R$.",
+  "lean": "∀ (I : Ideal (Matrix (Fin 2) (Fin 2) ℝ)), I = ⊥ ∨ I = ⊤",
+  "candidate": "I = (0) ∨ I = R",
+  "imports": "import Mathlib\n\nopen Fintype Set Real Ideal Polynomial\nopen scoped BigOperators\n\n\n\n"
+}

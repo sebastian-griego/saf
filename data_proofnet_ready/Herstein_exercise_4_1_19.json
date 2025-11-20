@@ -1,0 +1,8 @@
+{
+  "id": "Herstein|exercise_4_1_19",
+  "domain": "proofnet",
+  "nl": "Show that there is an infinite number of solutions to $x^2 = -1$ in the quaternions.",
+  "lean": "∀ : Infinite {x, Quaternion ℝ | x^2 = -1}",
+  "candidate": "Infinite { x | x ^ 2 = -1 }",
+  "imports": "import Mathlib\n\nopen Fintype Set Real Ideal Polynomial\nopen scoped BigOperators\n\n\n\n"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "Rudin|exercise_4_6",
+  "domain": "proofnet",
+  "nl": "If $f$ is defined on $E$, the graph of $f$ is the set of points $(x, f(x))$, for $x \\in E$. In particular, if $E$ is a set of real numbers, and $f$ is real-valued, the graph of $f$ is a subset of the plane. Suppose $E$ is compact, and prove that $f$ is continuous on $E$ if and only if its graph is compact.",
+  "lean": "∀ (f : ℝ → ℝ)\n  (E : Set ℝ)\n  (G : Set (ℝ × ℝ))\n  (h₁ : IsCompact E)\n  (h₂ : G = {(x, f x) | x ∈ E}), ContinuousOn f E ↔ IsCompact G",
+  "candidate": "∀ {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y] [CompactSpace X] (f : X → Y) : Continuous f ↔ IsClosed { x, X × Y | (x.fst, f x.fst) = x }",
+  "imports": "import Mathlib\n\nopen Topology Filter Real Complex TopologicalSpace Finset\nopen scoped BigOperators\n\n\n\n"
+}

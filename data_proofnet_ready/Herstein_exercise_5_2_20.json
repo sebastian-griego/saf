@@ -1,0 +1,8 @@
+{
+  "id": "Herstein|exercise_5_2_20",
+  "domain": "proofnet",
+  "nl": "Let $V$ be a vector space over an infinite field $F$. Show that $V$ cannot be the set-theoretic union of a finite number of proper subspaces of $V$.",
+  "lean": "∀ {F V ι: Type*} [Infinite F] [Field F]\n  [AddCommGroup V] [Module F V] [Finite ι] {u : ι → Submodule F V}\n  (hu : ∀ i : ι, u i ≠ ⊤) :\n  (⋃ i : ι, (u i, Set V)) ≠ ⊤",
+  "candidate": "∀ {F : Type*} [Field F] [Infinite F] {V : Type*} [AddCommGroup V] [Module F V] (k : ℕ) (M : Fin k → Submodule F V) (hM : ∀ i, (M i).toAddSubgroup < ⊤), ¬ (⨆ i, M i).toAddSubgroup = ⊤",
+  "imports": "import Mathlib\n\nopen Fintype Set Real Ideal Polynomial\nopen scoped BigOperators\n\n\n\n"
+}

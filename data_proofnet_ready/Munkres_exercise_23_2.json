@@ -1,0 +1,8 @@
+{
+  "id": "Munkres|exercise_23_2",
+  "domain": "proofnet",
+  "nl": "Let $\\left\\{A_{n}\\right\\}$ be a sequence of connected subspaces of $X$, such that $A_{n} \\cap A_{n+1} \\neq \\varnothing$ for all $n$. Show that $\\bigcup A_{n}$ is connected.",
+  "lean": "∀ {X : Type*}\n  [TopologicalSpace X] {A : ℕ → Set X} (hA : ∀ n, IsConnected (A n))\n  (hAn : ∀ n, A n ∩ A (n + 1) ≠ ∅), IsConnected (⋃ n, A n)",
+  "candidate": "∀ {X : Type*} [TopologicalSpace X] {A : ℕ → Set X} (hA : ∀ n, IsConnected (A n)) (h_inter : ∀ n, (A n ∩ A (n + 1)).Nonempty), IsConnected (⋃ n, A n)",
+  "imports": "import Mathlib\n\nopen Filter Set TopologicalSpace\nopen scoped Topology\n\n\n\n"
+}

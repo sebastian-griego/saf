@@ -1,0 +1,8 @@
+{
+  "id": "Artin|exercise_6_8_1",
+  "domain": "proofnet",
+  "nl": "Prove that two elements $a, b$ of a group generate the same subgroup as $b a b^2, b a b^3$.",
+  "lean": "∀ {G : Type*} [Group G]\n  (a b : G) : closure ({a, b}, Set G) = Subgroup.closure {b*a*b^2, b*a*b^3}",
+  "candidate": "∀ {G : Type*} [Group G] (a b : G), Subgroup.closure {a, b} = Subgroup.closure {b * a * b^2, b * a * b^3}",
+  "imports": "import Mathlib\n\nopen Function Fintype Subgroup Ideal Polynomial Submodule Zsqrtd\nopen scoped BigOperators\n\n\n\n"
+}

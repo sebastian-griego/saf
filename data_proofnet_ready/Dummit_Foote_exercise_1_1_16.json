@@ -1,0 +1,8 @@
+{
+  "id": "Dummit-Foote|exercise_1_1_16",
+  "domain": "proofnet",
+  "nl": "Let $x$ be an element of $G$. Prove that $x^2=1$ if and only if $|x|$ is either $1$ or $2$.",
+  "lean": "∀ {G : Type*} [Group G]\n  (x : G), x ^ 2 = 1 ↔ (orderOf x = 1 ∨ orderOf x = 2)",
+  "candidate": "∀ {G : Type*} [Group G] (x : G), x^2 = 1 ↔ orderOf x = 1 ∨ orderOf x = 2",
+  "imports": "import Mathlib\n\nopen Fintype Subgroup Set Polynomial Ideal\nopen scoped BigOperators\n\n\n\n"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "Rudin|exercise_4_4a",
+  "domain": "proofnet",
+  "nl": "Let $f$ and $g$ be continuous mappings of a metric space $X$ into a metric space $Y$, and let $E$ be a dense subset of $X$. Prove that $f(E)$ is dense in $f(X)$.",
+  "lean": "∀ {α : Type} [MetricSpace α]\n  {β : Type} [MetricSpace β]\n  (f : α → β)\n  (s : Set α)\n  (h₁ : Continuous f)\n  (h₂ : Dense s), f '' Set.univ ⊆ closure (f '' s)",
+  "candidate": "∀ {X Y : Type*} [MetricSpace X] [MetricSpace Y] {f g : X → Y} (hfg : ∀ x, ContinuousAt f x ∧ ContinuousAt g x) (E : Set X) (hE : Dense E), Dense (f '' E)",
+  "imports": "import Mathlib\n\nopen Topology Filter Real Complex TopologicalSpace Finset\nopen scoped BigOperators\n\n\n\n"
+}

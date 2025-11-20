@@ -1,0 +1,8 @@
+{
+  "id": "Herstein|exercise_2_6_15",
+  "domain": "proofnet",
+  "nl": "If $G$ is an abelian group and if $G$ has an element of order $m$ and one of order $n$, where $m$ and $n$ are relatively prime, prove that $G$ has an element of order $mn$.",
+  "lean": "∀ {G : Type*} [CommGroup G] {m n : ℕ}\n  (hm : ∃ (g : G), orderOf g = m)\n  (hn : ∃ (g : G), orderOf g = n)\n  (hmn : m.Coprime n) :\n  ∃ (g, G), orderOf g = m * n",
+  "candidate": "∀ {G : Type _} [Group G] {m n : ℕ} (hm : ∀ g : G, g ^ m = 1) (hn : ∀ g : G, g ^ n = 1) (hmn : m ∣ n ∨ n ∣ m) : ∃ g, G, g ^ m * g ^ n = 1",
+  "imports": "import Mathlib\n\nopen Fintype Set Real Ideal Polynomial\nopen scoped BigOperators\n\n\n\n"
+}

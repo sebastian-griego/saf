@@ -1,0 +1,8 @@
+{
+  "id": "Ireland-Rosen|exercise_3_14",
+  "domain": "proofnet",
+  "nl": "Let $p$ and $q$ be distinct odd primes such that $p-1$ divides $q-1$. If $(n, p q)=1$, show that $n^{q-1} \\equiv 1(p q)$.",
+  "lean": "∀ {p q n : ℕ} (hp0 : p.Prime ∧ p > 2)\n  (hq0 : q.Prime ∧ q > 2) (hpq0 : p ≠ q) (hpq1 : p - 1 ∣ q - 1)\n  (hn : n.gcd (p*q) = 1), n^(q-1) ≡ 1 [MOD p*q]",
+  "candidate": "∀ {p q : ℕ} (hp : Nat.Prime p) (hq : Nat.Prime q) (h : p ≠ q) (hp' : p % 4 = 1) (hq' : q % 4 = 1) (hpq : p - 1 ∣ q - 1), p * q ∣ q - 1",
+  "imports": "import Mathlib\n\nopen Real\nopen scoped BigOperators\n\n\n\n"
+}

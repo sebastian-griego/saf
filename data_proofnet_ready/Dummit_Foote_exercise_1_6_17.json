@@ -1,0 +1,8 @@
+{
+  "id": "Dummit-Foote|exercise_1_6_17",
+  "domain": "proofnet",
+  "nl": "Let $G$ be any group. Prove that the map from $G$ to itself defined by $g \\mapsto g^{-1}$ is a homomorphism if and only if $G$ is abelian.",
+  "lean": "∀ {G : Type*} [Group G] (f : G → G)\n  (hf : f = λ g => g⁻¹) :\n  (∀ x y : G, f x * f y = f (x*y)) ↔ ∀ x y, G, x*y = y*x",
+  "candidate": "∀ {G : Type*} [Group G] (f : G → G) (h : ∀ x y, f (x * y) = f y * f x), f = Inv.inv",
+  "imports": "import Mathlib\n\nopen Fintype Subgroup Set Polynomial Ideal\nopen scoped BigOperators\n\n\n\n"
+}

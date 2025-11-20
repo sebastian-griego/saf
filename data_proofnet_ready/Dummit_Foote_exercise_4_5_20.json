@@ -1,0 +1,8 @@
+{
+  "id": "Dummit-Foote|exercise_4_5_20",
+  "domain": "proofnet",
+  "nl": "Prove that if $|G|=1365$ then $G$ is not simple.",
+  "lean": "∀ {G : Type*} [Fintype G] [Group G]\n  (hG : card G = 1365), ¬ IsSimpleGroup G",
+  "candidate": "∀ {G : Type _} [Group G] [Fintype G] (hG : Fintype.card G = 1365) (h2G : 2 ≤ card G) (h3G : 3 < card G), ¬IsSimpleGroup G",
+  "imports": "import Mathlib\n\nopen Fintype Subgroup Set Polynomial Ideal\nopen scoped BigOperators\n\n\n\n"
+}

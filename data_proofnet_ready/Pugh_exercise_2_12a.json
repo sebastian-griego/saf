@@ -1,0 +1,8 @@
+{
+  "id": "Pugh|exercise_2_12a",
+  "domain": "proofnet",
+  "nl": "Let $(p_n)$ be a sequence and $f:\\mathbb{N}\\to\\mathbb{N}$. The sequence $(q_k)_{k\\in\\mathbb{N}}$ with $q_k=p_{f(k)}$ is called a rearrangement of $(p_n)$. Show that if $f$ is an injection, the limit of a sequence is unaffected by rearrangement.",
+  "lean": "∀ {α : Type*} [TopologicalSpace α]\n  (f : ℕ → ℕ) (p : ℕ → α) (a : α)\n  (hf : Injective f) (hp : Tendsto p atTop (𝓝 a)), Tendsto (λ n => p (f n)) atTop (𝓝 a)",
+  "candidate": "∀ {p : ℕ → ℝ} {f : ℕ → ℕ} (hf : Function.Injective f) (h : Tendsto p atTop (𝓝 a)), Tendsto (fun k => p (f k)) atTop (𝓝 a)",
+  "imports": "import Mathlib\n\nopen Filter Real Function\nopen scoped Topology\n\n\n\n"
+}

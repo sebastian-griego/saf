@@ -1,0 +1,8 @@
+{
+  "id": "Ireland-Rosen|exercise_4_8",
+  "domain": "proofnet",
+  "nl": "Let $p$ be an odd prime. Show that $a$ is a primitive root modulo $p$ iff $a^{(p-1) / q} \\not \\equiv 1(p)$ for all prime divisors $q$ of $p-1$.",
+  "lean": "∀ {p : ℕ} {a : ZMod p} (hp : Odd p) (hp' : p.Prime) :\n  IsPrimitiveRoot a p ↔ (∀ q, ℕ, q ∣ (p-1) → q.Prime → ¬ a^((p-1)/q) = 1)",
+  "candidate": "∀ {p : ℕ} [Fact p.Prime] (h : (p : ℕ) % 2 = 1) : IsPrimitiveRoot a p ↔ ∀ q, ℕ, q.Prime → q ∣ p - 1 → a ^ ((p - 1) / q) ≠ 1",
+  "imports": "import Mathlib\n\nopen Real\nopen scoped BigOperators\n\n\n\n"
+}

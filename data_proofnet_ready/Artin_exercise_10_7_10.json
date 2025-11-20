@@ -1,0 +1,8 @@
+{
+  "id": "Artin|exercise_10_7_10",
+  "domain": "proofnet",
+  "nl": "Let $R$ be a ring, with $M$ an ideal of $R$. Suppose that every element of $R$ which is not in $M$ is a unit of $R$. Prove that $M$ is a maximal ideal and that moreover it is the only maximal ideal of $R$.",
+  "lean": "∀ {R : Type*} [Ring R]\n  (M : Ideal R) (hM : ∀ (x : R), x ∉ M → IsUnit x)\n  (hProper : ∃ x : R, x ∉ M) :\n  IsMaximal M ∧ ∀ (N, Ideal R), IsMaximal N → N = M",
+  "candidate": "∀ {R : Type*} [Ring R] (M : Ideal R) (hM : ∀ (x : R), x ∉ M → IsUnit x) : IsMaximal M ∧ ∀ (N, Ideal R), IsMaximal N → N = M",
+  "imports": "import Mathlib\n\nopen Function Fintype Subgroup Ideal Polynomial Submodule Zsqrtd\nopen scoped BigOperators\n\n\n\n"
+}

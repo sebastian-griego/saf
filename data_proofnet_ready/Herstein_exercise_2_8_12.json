@@ -1,0 +1,8 @@
+{
+  "id": "Herstein|exercise_2_8_12",
+  "domain": "proofnet",
+  "nl": "Prove that any two nonabelian groups of order 21 are isomorphic.",
+  "lean": "∀ {G H : Type*} [Fintype G] [Fintype H]\n  [Group G] [Group H] (hG : card G = 21) (hH : card H = 21)\n  (hG1 : IsEmpty (CommGroup G)) (hH1 : IsEmpty (CommGroup H)), Nonempty (G ≃* H)",
+  "candidate": "nonabelianGroupOfOrder 21 ≅ nonabelianGroupOfOrder 21",
+  "imports": "import Mathlib\n\nopen Fintype Set Real Ideal Polynomial\nopen scoped BigOperators\n\n\n\n"
+}

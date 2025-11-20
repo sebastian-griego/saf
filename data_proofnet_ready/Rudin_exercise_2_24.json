@@ -1,0 +1,8 @@
+{
+  "id": "Rudin|exercise_2_24",
+  "domain": "proofnet",
+  "nl": "Let $X$ be a metric space in which every infinite subset has a limit point. Prove that $X$ is separable.",
+  "lean": "∀ {X : Type*} [MetricSpace X]\n  (hX : ∀ (A : Set X), Infinite A → ∃ (x : X), x ∈ closure A), SeparableSpace X",
+  "candidate": "∀ {X : Type*} [MetricSpace X] (h : ∀ (S : Set X) (hS : S.Infinite), ∃ (x : X), x ∈ closure S), SeparableSpace X",
+  "imports": "import Mathlib\n\nopen Topology Filter Real Complex TopologicalSpace Finset\nopen scoped BigOperators\n\n\n\n"
+}

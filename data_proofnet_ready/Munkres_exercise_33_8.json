@@ -1,0 +1,8 @@
+{
+  "id": "Munkres|exercise_33_8",
+  "domain": "proofnet",
+  "nl": "Let $X$ be completely regular, let $A$ and $B$ be disjoint closed subsets of $X$. Show that if $A$ is compact, there is a continuous function $f \\colon X \\rightarrow [0, 1]$ such that $f(A) = \\{0\\}$ and $f(B) = \\{1\\}$.",
+  "lean": "∀ (X : Type*) [TopologicalSpace X] [CompletelyRegularSpace X]\n  (A B : Set X) (hA : IsClosed A) (hB : IsClosed B)\n  (hAB : Disjoint A B)\n  (hAc : IsCompact A) :\n  ∃ (f, X → Icc 0 1), Continuous f ∧ f '' A = {0} ∧ f '' B = {1}",
+  "candidate": "∀ {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] {A B : Set X} (hAB : Disjoint A B) (hA : IsClosed A) (hB : IsClosed B) : ∃ (f, C(X, ℝ)), (∀ x ∈ A, f x = 0) ∧ (∀ x ∈ B, f x = 1)",
+  "imports": "import Mathlib\n\nopen Filter Set TopologicalSpace\nopen scoped Topology\n\n\n\n"
+}

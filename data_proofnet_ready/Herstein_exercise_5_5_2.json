@@ -1,0 +1,8 @@
+{
+  "id": "Herstein|exercise_5_5_2",
+  "domain": "proofnet",
+  "nl": "Prove that $x^3 - 3x - 1$ is irreducible over $\\mathbb{Q}$.",
+  "lean": "∀ : Irreducible (X^3 - 3*X - 1, Polynomial ℚ)",
+  "candidate": "∀ : Irreducible (Polynomial.X ^ 3 - 3 * Polynomial.X - 1, Polynomial ℚ)",
+  "imports": "import Mathlib\n\nopen Fintype Set Real Ideal Polynomial\nopen scoped BigOperators\n\n\n\n"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "Putnam|exercise_2017_b3",
+  "domain": "proofnet",
+  "nl": "Suppose that $f(x)=\\sum_{i=0}^{\\infty} c_{i} x^{i}$ is a power series for which each coefficient $c_{i}$ is 0 or 1 . Show that if $f(2 / 3)=3 / 2$, then $f(1 / 2)$ must be irrational.",
+  "lean": "∀ (f : ℝ → ℝ) (c : ℕ → ℝ)\n  (hf : f = λ x => (∑' (i : ℕ), (c i) * x^i))\n  (hc : ∀ n, c n = 0 ∨ c n = 1)\n  (hf1 : f (2/3) = 3/2), Irrational (f (1/2))",
+  "candidate": "∀ {c : ℕ → ℕ} (hc : ∀ i, c i = 0 ∨ c i = 1) (h_add_3_2 : (∑ i in Finset.range (n+1), c i * (2/3)^i) = 3/2), ¬(∑ i in Finset.range (n+1), c i * (1/2)^i) = 2/3",
+  "imports": "import Mathlib\n\nopen scoped BigOperators\n\n\n\n"
+}

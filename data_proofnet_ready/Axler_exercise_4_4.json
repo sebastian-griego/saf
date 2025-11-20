@@ -1,0 +1,8 @@
+{
+  "id": "Axler|exercise_4_4",
+  "domain": "proofnet",
+  "nl": "Suppose $p \\in \\mathcal{P}(\\mathbf{C})$ has degree $m$. Prove that $p$ has $m$ distinct roots if and only if $p$ and its derivative $p^{\\prime}$ have no roots in common.",
+  "lean": "∀ (p : Polynomial ℂ), p.degree = @card (rootSet p ℂ) (rootSetFintype p ℂ) ↔\n  Disjoint\n  (@card (rootSet (derivative p) ℂ) (rootSetFintype (derivative p) ℂ))\n  (@card (rootSet p ℂ) (rootSetFintype p ℂ))",
+  "candidate": "∀ [Field ℂ] {p : Polynomial ℂ} (h : p.degree = m), p.roots.toFinset.card = m ↔ (p.roots ∩ p.derivative.roots) = ∅",
+  "imports": "import Mathlib\n\nopen Fintype Complex Polynomial LinearMap FiniteDimensional Module Module.End\nopen scoped BigOperators\n\n\n\n"
+}

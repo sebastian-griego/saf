@@ -1,0 +1,8 @@
+{
+  "id": "Axler|exercise_1_3",
+  "domain": "proofnet",
+  "nl": "Prove that $-(-v) = v$ for every $v \\in V$.",
+  "lean": "∀ {F V : Type*} [AddCommGroup V] [Field F]\n  [Module F V] {v : V}, -(-v) = v",
+  "candidate": "-(-v) = v",
+  "imports": "import Mathlib\n\nopen Fintype Complex Polynomial LinearMap FiniteDimensional Module Module.End\nopen scoped BigOperators\n\n\n\n"
+}

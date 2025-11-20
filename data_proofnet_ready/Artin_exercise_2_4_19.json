@@ -1,0 +1,8 @@
+{
+  "id": "Artin|exercise_2_4_19",
+  "domain": "proofnet",
+  "nl": "Prove that if a group contains exactly one element of order 2 , then that element is in the center of the group.",
+  "lean": "∀ {G : Type*} [Group G] {x : G}\n  (hx : orderOf x = 2) (hx1 : ∀ y, orderOf y = 2 → y = x), x ∈ center G",
+  "candidate": "∀ {G : Type*} [Group G] {x : G} (hx : x ≠ 1) (hx' : ∀ y, y ∈ center G ∧ y ≠ 1 ↔ y = x), x ∈ center G",
+  "imports": "import Mathlib\n\nopen Function Fintype Subgroup Ideal Polynomial Submodule Zsqrtd\nopen scoped BigOperators\n\n\n\n"
+}

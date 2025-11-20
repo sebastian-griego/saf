@@ -1,0 +1,8 @@
+{
+  "id": "Dummit-Foote|exercise_9_3_2",
+  "domain": "proofnet",
+  "nl": "Prove that if $f(x)$ and $g(x)$ are polynomials with rational coefficients whose product $f(x) g(x)$ has integer coefficients, then the product of any coefficient of $g(x)$ with any coefficient of $f(x)$ is an integer.",
+  "lean": "∀ {f g : Polynomial ℚ} (i j : ℕ)\n  (hfg : ∀ n : ℕ, ∃ a : ℤ, (f*g).coeff = a) :\n  ∃ a, ℤ, f.coeff i * g.coeff j = a",
+  "candidate": "∀ {f g : R[X]} (hf : IsRat f) (hg : IsRat g) (hfg : IsInt (f * g)), IsInt (coeff g * coeff f)",
+  "imports": "import Mathlib\n\nopen Fintype Subgroup Set Polynomial Ideal\nopen scoped BigOperators\n\n\n\n"
+}

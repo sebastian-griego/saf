@@ -1,0 +1,8 @@
+{
+  "id": "Rudin|exercise_4_12",
+  "domain": "proofnet",
+  "nl": "A uniformly continuous function of a uniformly continuous function is uniformly continuous.",
+  "lean": "∀ {α β γ : Type*} [UniformSpace α] [UniformSpace β] [UniformSpace γ]\n  {f : α → β} {g : β → γ}\n  (hf : UniformContinuous f) (hg : UniformContinuous g), UniformContinuous (g ∘ f)",
+  "candidate": "∀ (f : α → β), UniformContinuous (uniformContinuous f)",
+  "imports": "import Mathlib\n\nopen Topology Filter Real Complex TopologicalSpace Finset\nopen scoped BigOperators\n\n\n\n"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "Rudin|exercise_1_13",
+  "domain": "proofnet",
+  "nl": "If $x, y$ are complex, prove that $||x|-|y|| \\leq |x-y|$.",
+  "lean": "∀ (x y : ℂ), |(abs x) - (abs y)| ≤ abs (x - y)",
+  "candidate": "∀ (x y : ℂ), abs x - abs y ≤ abs (x - y)",
+  "imports": "import Mathlib\n\nopen Topology Filter Real Complex TopologicalSpace Finset\nopen scoped BigOperators\n\n\n\n"
+}

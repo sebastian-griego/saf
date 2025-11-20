@@ -1,0 +1,8 @@
+{
+  "id": "Rudin|exercise_1_18a",
+  "domain": "proofnet",
+  "nl": "If $k \\geq 2$ and $\\mathbf{x} \\in R^{k}$, prove that there exists $\\mathbf{y} \\in R^{k}$ such that $\\mathbf{y} \\neq 0$ but $\\mathbf{x} \\cdot \\mathbf{y}=0$",
+  "lean": "∀ (n : ℕ)\n  (h : n > 1)\n  (x : EuclideanSpace ℝ (Fin n)) -- R^n\n  : ∃ (y : EuclideanSpace ℝ (Fin n)), y ≠ 0 ∧ (inner x y) = (0, ℝ)",
+  "candidate": "∀ (k : ℕ) (x : Fin k → ℝ) : ∃ y, Fin k → ℝ, y ≠ 0 ∧ ∀ i, x i * y i = 0",
+  "imports": "import Mathlib\n\nopen Topology Filter Real Complex TopologicalSpace Finset\nopen scoped BigOperators\n\n\n\n"
+}

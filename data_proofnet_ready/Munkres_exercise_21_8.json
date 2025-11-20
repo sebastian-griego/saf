@@ -1,0 +1,8 @@
+{
+  "id": "Munkres|exercise_21_8",
+  "domain": "proofnet",
+  "nl": "Let $X$ be a topological space and let $Y$ be a metric space. Let $f_{n}: X \\rightarrow Y$ be a sequence of continuous functions. Let $x_{n}$ be a sequence of points of $X$ converging to $x$. Show that if the sequence $\\left(f_{n}\\right)$ converges uniformly to $f$, then $\\left(f_{n}\\left(x_{n}\\right)\\right)$ converges to $f(x)$.",
+  "lean": "∀ {X : Type*} [TopologicalSpace X] {Y : Type*} [MetricSpace Y]\n  {f : ℕ → X → Y} {x : ℕ → X}\n  (hf : ∀ n, Continuous (f n))\n  (x₀ : X)\n  (hx : Tendsto x atTop (𝓝 x₀))\n  (f₀ : X → Y)\n  (hh : TendstoUniformly f f₀ atTop), Tendsto (λ n => f n (x n)) atTop (𝓝 (f₀ x₀))",
+  "candidate": "∀ {X Y : Type*} [TopologicalSpace X] [MetricSpace Y] (f : X → Y) (hn : ℕ → X → Y) (hn' : ∀ n, Continuous (hn n)) (h : TendstoUniformlyOn (fun n x => hn n x) f atTop (univ : Set X)) (x : X) (hx : Tendsto (fun n => hn n x) atTop (𝓝 (f x))), Tendsto (fun n => hn n x) atTop (𝓝 (f x))",
+  "imports": "import Mathlib\n\nopen Filter Set TopologicalSpace\nopen scoped Topology\n\n\n\n"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "Rudin|exercise_5_15",
+  "domain": "proofnet",
+  "nl": "Suppose $a \\in R^{1}, f$ is a twice-differentiable real function on $(a, \\infty)$, and $M_{0}, M_{1}, M_{2}$ are the least upper bounds of $|f(x)|,\\left|f^{\\prime}(x)\\right|,\\left|f^{\\prime \\prime}(x)\\right|$, respectively, on $(a, \\infty)$. Prove that $M_{1}^{2} \\leq 4 M_{0} M_{2} .$",
+  "lean": "∀ {f : ℝ → ℝ} (a M0 M1 M2 : ℝ)\n  (hf' : DifferentiableOn ℝ f (Set.Ioi a))\n  (hf'' : DifferentiableOn ℝ (deriv f) (Set.Ioi a))\n  (hM0 : M0 = sSup {(|f x|) | x ∈ (Set.Ioi a)})\n  (hM1 : M1 = sSup {(|deriv f x|) | x ∈ (Set.Ioi a)})\n  (hM2 : M2 = sSup {(|deriv (deriv f) x|) | x ∈ (Set.Ioi a)}), (M1 ^ 2) ≤ 4 * M0 * M2",
+  "candidate": "∀ (a : ℝ) {f : ℝ → ℝ} (h : ContDiff ℝ 2 f) (f0 : ∀ x ≥ a, |f x| ≤ M₀) (fprime : ∀ x ≥ a, |f x| ≤ M₂) (fprimeprime : ∀ x ≥ a, |f x| ≤ M₂), |f x| ≤ 2 * M₀ * sqrt M₂ + M₀",
+  "imports": "import Mathlib\n\nopen Topology Filter Real Complex TopologicalSpace Finset\nopen scoped BigOperators\n\n\n\n"
+}

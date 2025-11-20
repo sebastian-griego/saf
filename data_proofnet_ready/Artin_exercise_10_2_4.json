@@ -1,0 +1,8 @@
+{
+  "id": "Artin|exercise_10_2_4",
+  "domain": "proofnet",
+  "nl": "Prove that in the ring $\\mathbb{Z}[x],(2) \\cap(x)=(2 x)$.",
+  "lean": "∀ :\n  span ({2} : Set $ Polynomial ℤ) ⊓ (span {X}) =\n  span ({2 * X}, Set $ Polynomial ℤ)",
+  "candidate": "∀ : (2, Ideal R) ⊓ X = 2 * X",
+  "imports": "import Mathlib\n\nopen Function Fintype Subgroup Ideal Polynomial Submodule Zsqrtd\nopen scoped BigOperators\n\n\n\n"
+}

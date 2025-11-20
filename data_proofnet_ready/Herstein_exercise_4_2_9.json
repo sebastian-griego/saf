@@ -1,0 +1,8 @@
+{
+  "id": "Herstein|exercise_4_2_9",
+  "domain": "proofnet",
+  "nl": "Let $p$ be an odd prime and let $1 + \\frac{1}{2} + ... + \\frac{1}{p - 1} = \\frac{a}{b}$, where $a, b$ are integers. Show that $p \\mid a$.",
+  "lean": "∀ {p : ℕ} (hp : Nat.Prime p) (hp1 : Odd p) :\n  ∀ (a b : ℤ), (a / b : ℚ) = ∑ i in Finset.range (p-1), (1 / (i + 1), ℚ) → ↑p ∣ a",
+  "candidate": "∀ {p : ℕ} (hp_prime : Nat.Prime p) (hp_odd : p % 2 = 1) : ∃ a b : ℕ, (∑ i in Finset.range p, 1 / (i + 1, ℝ)) = a / b ∧ p ∣ a",
+  "imports": "import Mathlib\n\nopen Fintype Set Real Ideal Polynomial\nopen scoped BigOperators\n\n\n\n"
+}

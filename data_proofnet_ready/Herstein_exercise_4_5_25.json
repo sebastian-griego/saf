@@ -1,0 +1,8 @@
+{
+  "id": "Herstein|exercise_4_5_25",
+  "domain": "proofnet",
+  "nl": "If $p$ is a prime, show that $q(x) = 1 + x + x^2 + \\cdots x^{p - 1}$ is irreducible in $Q[x]$.",
+  "lean": "∀ {p : ℕ} (hp : Nat.Prime p) :\n  Irreducible (∑ i in Finset.range p, X ^ i, Polynomial ℚ)",
+  "candidate": "∀ {p : ℕ} (hp : p.Prime) : Irreducible (X ^ p - 1, Polynomial (ZMod p))",
+  "imports": "import Mathlib\n\nopen Fintype Set Real Ideal Polynomial\nopen scoped BigOperators\n\n\n\n"
+}

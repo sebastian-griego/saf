@@ -1,0 +1,8 @@
+{
+  "id": "Artin|exercise_3_5_6",
+  "domain": "proofnet",
+  "nl": "Let $V$ be a vector space which is spanned by a countably infinite set. Prove that every linearly independent subset of $V$ is finite or countably infinite.",
+  "lean": "∀ {K V : Type*} [Field K] [AddCommGroup V]\n  [Module K V] {S : Set V} (hS : Set.Countable S)\n  (hS1 : span K S = ⊤) {ι : Type*} (R : ι → V)\n  (hR : LinearIndependent K R), Countable ι",
+  "candidate": "∀ {V : Type*} [AddCommGroup V] [Module ℝ V] {S : Set V} (hS : Set.Countable S) (hS_span : Submodule.span ℝ S = ⊤) : ∀ T : Set V, LinearIndependent ℝ (Subtype.val, T → V) → T.Finite ∨ Set.Countable T",
+  "imports": "import Mathlib\n\nopen Function Fintype Subgroup Ideal Polynomial Submodule Zsqrtd\nopen scoped BigOperators\n\n\n\n"
+}

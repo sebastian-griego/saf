@@ -1,0 +1,8 @@
+{
+  "id": "Shakarchi|exercise_1_13c",
+  "domain": "proofnet",
+  "nl": "Suppose that $f$ is holomorphic in an open set $\\Omega$. Prove that if $|f|$ is constant, then $f$ is constant.",
+  "lean": "∀ {f : ℂ → ℂ} (Ω : Set ℂ) (a b : Ω) (h : IsOpen Ω)\n  (hf : DifferentiableOn ℂ f Ω) (hc : ∃ (c : ℝ), ∀ z ∈ Ω, abs (f z) = c), f a = f b",
+  "candidate": "∀ (f : ℂ → ℂ) {s : Set ℂ} (hs : IsOpen s) (hf : AnalyticOn ℂ f s), (∀ z ∈ s, abs (f z) = c) → (∀ z ∈ s, f z = c)",
+  "imports": "import Mathlib\n\nopen Complex Filter Function Metric Finset\nopen scoped BigOperators Topology\n\n\n\n"
+}

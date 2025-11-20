@@ -1,0 +1,8 @@
+{
+  "id": "Dummit-Foote|exercise_9_1_6",
+  "domain": "proofnet",
+  "nl": "Prove that $(x, y)$ is not a principal ideal in $\\mathbb{Q}[x, y]$.",
+  "lean": "∀ : ¬ Submodule.IsPrincipal\n  (span ({MvPolynomial.X 0, MvPolynomial.X 1}, Set (MvPolynomial (Fin 2) ℚ)))",
+  "candidate": "¬IsPrincipal (x, y)",
+  "imports": "import Mathlib\n\nopen Fintype Subgroup Set Polynomial Ideal\nopen scoped BigOperators\n\n\n\n"
+}
