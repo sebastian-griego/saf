@@ -1,0 +1,465 @@
+{
+  "summary": {
+    "counts": {
+      "accepted": 0,
+      "rejected": 67
+    },
+    "total": 67,
+    "tier_breakdown": {
+      "S0": 0,
+      "S1": 0,
+      "S3-Lite": 0,
+      "BEq+": 0
+    },
+    "proof_budget": {
+      "typecheck_timeout_seconds": null,
+      "s3_timeout_seconds": null,
+      "beq_plus_timeout_seconds": null,
+      "max_beq_plus_calls": null,
+      "beq_plus_calls_used": null,
+      "max_tactic_steps": null
+    }
+  },
+  "results": [
+    {
+      "id": "Artin|exercise_10_2_4",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Artin|exercise_10_7_10",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Artin|exercise_11_4_1b",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Artin|exercise_2_11_3",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Artin|exercise_2_4_19",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {G : Type*} [Group G] {x : G} (hx : orderOf x = 2) (hx1 : ∀ y, orderOf y = 2 → y = x), x ∈ center G",
+      "candidate_norm": "∀ {G : Type*} [Group G] {x : G} (hx : x ≠ 1) (hx' : ∀ y, y ∈ center G ∧ y ≠ 1 ↔ y = x), x ∈ center G"
+    },
+    {
+      "id": "Artin|exercise_3_5_6",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Artin|exercise_6_8_1",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {G : Type*} [Group G] (a b : G) : closure ({a, b}, Set G) = Subgroup.closure {b*a*b^2, b*a*b^3}",
+      "candidate_norm": "∀ {G : Type*} [Group G] (a b : G), Subgroup.closure {a, b} = Subgroup.closure {b * a * b^2, b * a * b^3}"
+    },
+    {
+      "id": "Axler|exercise_1_3",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Axler|exercise_4_4",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Axler|exercise_5_20",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Dummit-Foote|exercise_1_1_16",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {G : Type*} [Group G] (x : G), x ^ 2 = 1 ↔ (orderOf x = 1 ∨ orderOf x = 2)",
+      "candidate_norm": "∀ {G : Type*} [Group G] (x : G), x^2 = 1 ↔ orderOf x = 1 ∨ orderOf x = 2"
+    },
+    {
+      "id": "Dummit-Foote|exercise_1_6_17",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {G : Type*} [Group G] (f : G → G) (hf : f = λ g = > g−1) : (∀ (x y : G), f x * f y = f (x*y)) ↔ ∀ x y, G, x*y = y*x",
+      "candidate_norm": "∀ {G : Type*} [Group G] (f : G → G) (h : ∀ x y, f (x * y) = f y * f x), f = Inv.inv"
+    },
+    {
+      "id": "Dummit-Foote|exercise_3_4_5a",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {G : Type*} [Group G] (H : Subgroup G) [IsSolvable G], IsSolvable H",
+      "candidate_norm": "∀ {G : Type*} [Group G] {H : Subgroup G} (hG : IsSolvable G), IsSolvable H"
+    },
+    {
+      "id": "Dummit-Foote|exercise_4_4_6a",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {G : Type*} [Group G] (H : Subgroup G) [Characteristic H], Normal H",
+      "candidate_norm": "∀ {G : Type*} [Group G] (H : Subgroup G), Characteristic H → Normal H"
+    },
+    {
+      "id": "Dummit-Foote|exercise_4_5_16",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {p q r : N} {G : Type*} [Group G] [Fintype G] (hpqr : p < q ∧ q < r) (hpqr1 : p.Prime ∧ q.Prime ∧ r.Prime)(hG : card G = p*q*r) : (∃ (P : Sylow p G), P.Normal) ∨ (∃ (P : Sylow q G), P.Normal) ∨ (∃ (P, Sylow r G), P.Normal)",
+      "candidate_norm": "∀ (G : Type*) [Group G] (hG : Fintype G) (p q r : N) (hp : Nat.Prime p) (hq : Nat.Prime q) (hr : Nat.Prime r) (hG_card : Fintype.card G = p * q * r) (h : p + q < r), Fintype.card G = p * q * (r - (p + q)) + p * q"
+    },
+    {
+      "id": "Dummit-Foote|exercise_4_5_20",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Dummit-Foote|exercise_7_1_11",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {R : Type*} [CommRing R] [IsDomain R] {x : R} (hx : x^2 = 1), x = 1 ∨ x = -1",
+      "candidate_norm": "∀ {R : Type*} [CommRing R] [IsDomain R] (x : R) (h : x^2 = 1), x = -1 ∨ x = 1"
+    },
+    {
+      "id": "Dummit-Foote|exercise_7_3_37",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Dummit-Foote|exercise_9_1_6",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Dummit-Foote|exercise_9_3_2",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Dummit-Foote|exercise_9_4_2d",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Herstein|exercise_2_1_27",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Herstein|exercise_2_6_15",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Herstein|exercise_2_8_12",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Herstein|exercise_4_1_19",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ : Infinite {x, Quaternion R | x^2 = -1}",
+      "candidate_norm": "Infinite { x | x ^ 2 = -1 }"
+    },
+    {
+      "id": "Herstein|exercise_4_2_5",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Herstein|exercise_4_2_9",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Herstein|exercise_4_3_25",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Herstein|exercise_4_5_25",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Herstein|exercise_4_6_3",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Herstein|exercise_5_2_20",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {F V ι : Type*} [Infinite F] [Field F] [AddCommGroup V] [Module F V] [Finite ι] {u : ι → Submodule F V} (hu : ∀ (i : ι), u i ≠ ⊤) : (⋃ i : ι, (u i, Set V)) ≠ ⊤",
+      "candidate_norm": "∀ {F : Type*} [Field F] [Infinite F] {V : Type*} [AddCommGroup V] [Module F V] (k : N) (M : Fin k → Submodule F V) (hM : ∀ i, (M i).toAddSubgroup < ⊤), ¬(⨆ i, M i).toAddSubgroup = ⊤"
+    },
+    {
+      "id": "Herstein|exercise_5_5_2",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Ireland-Rosen|exercise_18_4",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Ireland-Rosen|exercise_1_27",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {n : N} (hn : Odd n), 8 ∣ (n^2 - 1)",
+      "candidate_norm": "∀ {n : N} (hn : Odd n), 8 ∣ n^2 - 1"
+    },
+    {
+      "id": "Ireland-Rosen|exercise_1_31",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Ireland-Rosen|exercise_3_14",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {p q n : N} (hp0 : p.Prime ∧ p > 2) (hq0 : q.Prime ∧ q > 2) (hpq0 : p ≠ q) (hpq1 : p - 1 ∣ q - 1) (hn : n.gcd (p*q) = 1), n^(q-1) ≡ 1 [MOD p*q]",
+      "candidate_norm": "∀ {p q : N} (hp : Nat.Prime p) (hq : Nat.Prime q) (h : p ≠ q) (hp' : p % 4 = 1) (hq' : q % 4 = 1) (hpq : p - 1 ∣ q - 1), p * q ∣ q - 1"
+    },
+    {
+      "id": "Ireland-Rosen|exercise_3_5",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Ireland-Rosen|exercise_4_8",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Munkres|exercise_13_4a1",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Munkres|exercise_13_4b1",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Munkres|exercise_13_5a",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Munkres|exercise_13_6",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Munkres|exercise_18_8b",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Munkres|exercise_21_8",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {X : Type*} [TopologicalSpace X] {Y : Type*} [MetricSpace Y] {f : N → X → Y} {x : N → X} (hf : ∀ n, Continuous (f n)) (x0 : X) (hx : Tendsto x atTop (N x0)) (f0 : X → Y) (hh : TendstoUniformly f f0 atTop), Tendsto (λ n = > f n (x n)) atTop (N (f0 x0))",
+      "candidate_norm": "∀ {X Y : Type*} [TopologicalSpace X] [MetricSpace Y] (f : X → Y) (hn : N → X → Y) (hn' : ∀ n, Continuous (hn n)) (h : TendstoUniformlyOn (fun n x = > hn n x) f atTop (univ : Set X)) (x : X) (hx : Tendsto (fun n = > hn n x) atTop (N (f x))), Tendsto (fun n = > hn n x) atTop (N (f x))"
+    },
+    {
+      "id": "Munkres|exercise_23_2",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {X : Type*} [TopologicalSpace X] {A : N → Set X} (hA : ∀ n, IsConnected (A n)) (hAn : ∀ n, A n ∩ A (n + 1) ≠ ∅), IsConnected (⋃ n, A n)",
+      "candidate_norm": "∀ {X : Type*} [TopologicalSpace X] {A : N → Set X} (hA : ∀ n, IsConnected (A n)) (h_inter : ∀ n, (A n ∩ A (n + 1)).Nonempty), IsConnected (⋃ n, A n)"
+    },
+    {
+      "id": "Munkres|exercise_32_2b",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {ι : Type*} {X : ι → Type*} [∀ i, TopologicalSpace (X i)] (h : ∀ i, Nonempty (X i)) (h2 : RegularSpace (Π i, X i)), ∀ i, RegularSpace (X i)",
+      "candidate_norm": "∀ {ι : Type*} {X : ι → Type*} [Π i, TopologicalSpace (X i)] (h : RegularSpace (Π i, X i)) (hne : ∀ i, Nonempty (X i)), ∀ i, RegularSpace (X i)"
+    },
+    {
+      "id": "Munkres|exercise_33_8",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Munkres|exercise_38_6",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Pugh|exercise_2_12a",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Putnam|exercise_1998_a3",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ (f : R → R) (hf : ContDiff R 3 f) : ∃ a, R, (f a) * (deriv f a) * (iteratedDeriv 2 f a) * (iteratedDeriv 3 f a) ≥ 0",
+      "candidate_norm": "∀ {f : R → R} (h : Continuous (deriv^[3] f)), ∃ a, deriv^[3] f a = 0"
+    },
+    {
+      "id": "Putnam|exercise_2000_a2",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Putnam|exercise_2017_b3",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Rudin|exercise_1_13",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Rudin|exercise_1_18a",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Rudin|exercise_1_19",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Rudin|exercise_2_24",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {X : Type*} [MetricSpace X] (hX : ∀ (A : Set X), Infinite A → ∃ (x : X), x ∈ closure A), SeparableSpace X",
+      "candidate_norm": "∀ {X : Type*} [MetricSpace X] (h : ∀ (S : Set X) (hS : S.Infinite), ∃ (x : X), x ∈ closure S), SeparableSpace X"
+    },
+    {
+      "id": "Rudin|exercise_3_20",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {X : Type*} [MetricSpace X] (p : N → X) (l : N+) (r : X) (hp : CauchySeq p) (hpl : Tendsto (λ n = > p (l * n)) atTop (N r)), Tendsto p atTop (N r)",
+      "candidate_norm": "∀ {X : Type*} [MetricSpace X] {f : N → X} (hf : CauchySeq f) {p : X} (hp : Tendsto f atTop (N p)), Tendsto f atTop (N p)"
+    },
+    {
+      "id": "Rudin|exercise_3_22",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Rudin|exercise_4_12",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Rudin|exercise_4_4a",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "normalized_mismatch",
+      "canonical_norm": "∀ {α : Type} [MetricSpace α] {β : Type} [MetricSpace β] (f : α → β) (s : Set α) (h1 : Continuous f) (h2 : Dense s), f '' Set.univ ⊆ closure (f '' s)",
+      "candidate_norm": "∀ {X Y : Type*} [MetricSpace X] [MetricSpace Y] {f g : X → Y} (hfg : ∀ x, ContinuousAt f x ∧ ContinuousAt g x) (E : Set X) (hE : Dense E), Dense (f '' E)"
+    },
+    {
+      "id": "Rudin|exercise_4_5a",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Rudin|exercise_4_6",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Rudin|exercise_4_8b",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Rudin|exercise_5_15",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Shakarchi|exercise_1_13a",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Shakarchi|exercise_1_13c",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    },
+    {
+      "id": "Shakarchi|exercise_1_26",
+      "status": "rejected",
+      "tier": "S0",
+      "reason": "type_check_failed"
+    }
+  ]
+}
